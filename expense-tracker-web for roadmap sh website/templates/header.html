@@ -1,0 +1,195 @@
+<nav class="navbar navbar-expand-lg shadow-sm glass-navbar" style="backdrop-filter: blur(12px); background: rgba(255,255,255,0.85); border-radius: 1.5rem; margin: 1.5rem 1.5rem 2rem 1.5rem; box-shadow: 0 8px 32px 0 rgba(80, 80, 160, 0.15);">
+  <div class="container-fluid px-4 py-2">
+    <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4 gradient-text" href="/">
+      <i class="bi bi-wallet2 fs-3" style="color: #6366f1;"></i>
+      <span style="font-family: 'Poppins', Arial, sans-serif; letter-spacing: 1px;">Expense Tracker</span>
+    </a>
+    <button class="navbar-toggler rounded-circle border-0 p-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="background: rgba(99,102,241,0.12);">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/add">Add</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/budgets">Budgets</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/analytics">Analytics</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/groups">Groups</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/reports">Reports</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/import">Import</a>
+        </li>
+        <li class="nav-item dropdown ms-lg-3">
+          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 px-2 py-1" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://ui-avatars.com/api/?name={{ session.get('username', 'U') }}&background=6366f1&color=fff&rounded=true&size=32" class="rounded-circle border border-2" style="width:32px; height:32px; border-color: #6366f1 !important;" alt="User">
+            <span class="d-none d-lg-inline username-span">{{ session.get('username', 'User') }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+            <li><a class="dropdown-item" href="/settings">Settings</a></li>
+            <li><a class="dropdown-item" href="/comments">Comments Management</a></li>
+            {% if session.get('username') in ['admin', 'superuser'] %}
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-primary fw-bold" href="/admin">
+                <i class="bi bi-shield-check me-2"></i>Admin Panel
+            </a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+          </ul>
+        </li>
+        <li class="nav-item ms-2 d-flex align-items-center">
+          <button id="themeToggle" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark/light mode" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; transition: all 0.3s ease;">
+            🌙
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<style>
+.glass-navbar {
+  border: 1.5px solid rgba(99,102,241,0.10);
+}
+.gradient-text {
+  background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+.navbar-nav .nav-link {
+  color: #23272b !important;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  margin: 0 0.1rem;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+  background: #6366f1 !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px 0 rgba(80, 80, 160, 0.10);
+}
+.navbar-nav .nav-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #6366f1;
+}
+.navbar .dropdown-menu {
+  border-radius: 0.75rem;
+  min-width: 180px;
+}
+.navbar .dropdown-item:active {
+  background: #6366f1;
+  color: #fff;
+}
+.navbar .navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+.navbar-toggler {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 991.98px) {
+  .navbar {
+    border-radius: 0 0 1.5rem 1.5rem;
+    margin: 0 0 1.5rem 0;
+  }
+  .navbar .collapse {
+    background: rgba(255,255,255,0.97);
+    border-radius: 0 0 1.25rem 1.25rem;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 24px 0 rgba(80, 80, 160, 0.10);
+    padding-bottom: 1rem;
+  }
+}
+@media (max-width: 575.98px) {
+  .navbar {
+    border-radius: 0 0 1rem 1rem;
+    margin: 0 0 1rem 0;
+    padding: 0.5rem 0.2rem;
+  }
+  .navbar .container-fluid {
+    padding: 0.5rem 0.5rem;
+  }
+  .navbar-brand {
+    font-size: 1.1rem !important;
+    gap: 0.5rem !important;
+  }
+  .navbar-brand .fs-3 {
+    font-size: 1.5rem !important;
+  }
+  .navbar-toggler {
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+    padding: 0.3rem;
+  }
+  .navbar-nav .nav-link {
+    padding: 0.5rem 0.7rem;
+    font-size: 1rem;
+    margin: 0.1rem 0;
+  }
+  .navbar .dropdown-menu {
+    min-width: 140px;
+    font-size: 0.98rem;
+  }
+  .navbar .dropdown-item {
+    padding: 0.5rem 1rem;
+  }
+  .navbar .dropdown-toggle .username-span {
+    display: none !important;
+  }
+  .navbar .dropdown-toggle img {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .theme-toggle-btn {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 1.1rem !important;
+  }
+}
+</style>
+<script>
+// Highlight active nav link
+const path = window.location.pathname;
+document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+  if (link.getAttribute('href') === path) {
+    link.classList.add('active');
+  }
+});
+// Toggle dark-mode class on navbar
+function updateNavbarDarkMode() {
+  const navbar = document.querySelector('.navbar');
+  if (!navbar) return;
+  if (document.body.classList.contains('dark-mode')) {
+    navbar.classList.add('dark-mode');
+  } else {
+    navbar.classList.remove('dark-mode');
+  }
+  // Username color
+  document.querySelectorAll('.username-span').forEach(span => {
+    span.style.color = document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#23272b';
+  });
+}
+updateNavbarDarkMode();
+const observer = new MutationObserver(updateNavbarDarkMode);
+observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+</script> 

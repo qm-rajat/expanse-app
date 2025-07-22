@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Reports Header -->
+<div class="flex items-center gap-3 mb-6">
+  <i class="bi bi-file-earmark-text-fill text-3xl text-indigo-500"></i>
+  <h2 class="fw-bold text-2xl mb-0">Custom Reports</h2>
+</div>
+<!-- Filter Form Card -->
+<div class="card mb-5 p-4 shadow-sm border-0 bg-white">
+  <form method="post" class="row g-3 items-end">
+    <div class="col-md-2">
+      <label for="start_date" class="form-label">Start Date</label>
+      <input type="date" class="form-control" id="start_date" name="start_date" value="{{ filters.start_date or '' }}">
+    </div>
+    <div class="col-md-2">
+      <label for="end_date" class="form-label">End Date</label>
+      <input type="date" class="form-control" id="end_date" name="end_date" value="{{ filters.end_date or '' }}">
+    </div>
+    <div class="col-md-2">
+      <label for="category" class="form-label">Category</label>
+      <select class="form-select" id="category" name="category">
+        <option value="">All</option>
+        {% for cat in categories %}
+        <option value="{{ cat }}" {% if filters.category == cat %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label for="currency" class="form-label">Currency</label>
+      <select class="form-select" id="currency" name="currency">
+        {% for curr in ['USD', 'INR', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'] %}
+        <option value="{{ curr }}" {% if filters.currency == curr %}selected{% endif %}>{{ curr }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label for="group_id" class="form-label">Group</label>
+      <select class="form-select" id="group_id" name="group_id">
+        <option value="">Personal</option>
+        {% for g in user_groups %}
+        <option value="{{ g._id }}" {% if filters.group_id == g._id|string %}selected{% endif %}>{{ g.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2 align-self-end">
+      <button type="submit" class="btn btn-primary w-100 flex items-center gap-2 justify-center"><i class="bi bi-funnel"></i> Generate</button>
+    </div>
+  </form>
+</div>
+{% if expenses %}
+<div class="mb-3">
+  <form method="post" class="flex gap-2">
+    {% for k, v in filters.items() %}
+      <input type="hidden" name="{{ k }}" value="{{ v }}">
+    {% endfor %}
+    <button type="submit" name="export" value="csv" class="btn btn-outline-secondary btn-sm flex items-center gap-1"><i class="bi bi-file-earmark-spreadsheet"></i> Export CSV</button>
+    <button type="submit" name="export" value="pdf" class="btn btn-outline-secondary btn-sm flex items-center gap-1"><i class="bi bi-file-earmark-pdf"></i> Export PDF</button>
+  </form>
+</div>
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th><i class="bi bi-calendar-event text-info"></i> Date</th>
+          <th><i class="bi bi-tag-fill text-secondary"></i> Category</th>
+          <th><i class="bi bi-chat-left-text text-muted"></i> Description</th>
+          <th><i class="bi bi-arrow-left-right text-primary"></i> Type</th>
+          <th><i class="bi bi-cash-coin text-success"></i> Amount</th>
+          <th><i class="bi bi-currency-exchange text-warning"></i> Currency</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for expense in expenses %}
+        <tr class="transition hover:bg-indigo-50">
+          <td>{{ expense.date }}</td>
+          <td>{{ expense.category }}</td>
+          <td>{{ expense.description }}</td>
+          <td>{{ expense.type }}</td>
+          <td>{{ expense.amount }}</td>
+          <td>{{ filters.currency }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<p class="text-muted mt-4">No expenses found for the selected filters.</p>
+{% endif %}
+{% endblock %} 

@@ -1,0 +1,509 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 fw-bold text-primary mb-1">
+                <i class="bi bi-chat-dots me-2"></i>Comment Management
+            </h1>
+            <p class="text-muted mb-0">Moderate and manage user comments</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters and Actions -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search comments...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="statusFilter">
+                        <option value="">All Comments</option>
+                        <option value="pending">Pending Approval</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="sortBy">
+                        <option value="date">Sort by Date</option>
+                        <option value="author">Sort by Author</option>
+                        <option value="status">Sort by Status</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" onclick="refreshComments()">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="card mb-4" id="bulkActions" style="display: none;">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted">
+                    <span id="selectedCount">0</span> comments selected
+                </span>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-success" onclick="bulkAction('approve')">
+                        <i class="bi bi-check-circle me-2"></i>Approve Selected
+                    </button>
+                    <button class="btn btn-danger" onclick="bulkAction('delete')">
+                        <i class="bi bi-trash me-2"></i>Delete Selected
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearSelection()">
+                        <i class="bi bi-x-circle me-2"></i>Clear Selection
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Table -->
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-table me-2"></i>Comments ({{ comments|length }})
+                </h5>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-warning">{{ comments|selectattr('approved', 'equalto', false)|list|length }} Pending</span>
+                    <span class="badge bg-success">{{ comments|selectattr('approved', 'equalto', true)|list|length }} Approved</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="commentsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>
+                                <input type="checkbox" class="form-check-input" id="selectAll">
+                            </th>
+                            <th>Author</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for comment in comments %}
+                        <tr data-status="{{ 'pending' if not comment.approved else 'approved' }}" data-author="{{ comment.name }}">
+                            <td>
+                                <input type="checkbox" class="form-check-input comment-checkbox" value="{{ comment._id }}">
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar me-3">
+                                        <i class="bi bi-person-circle"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">{{ comment.name }}</h6>
+                                        <small class="text-muted">{{ comment.email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="comment-content">
+                                    <p class="mb-1">{{ comment.comment[:100] }}{% if comment.comment|length > 100 %}...{% endif %}</p>
+                                    {% if comment.comment|length > 100 %}
+                                    <button class="btn btn-sm btn-link p-0" onclick="showFullComment('{{ comment._id }}')">
+                                        Read more
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-muted">{{ comment.date }}</span>
+                            </td>
+                            <td>
+                                {% if comment.approved %}
+                                <span class="badge bg-success">Approved</span>
+                                {% else %}
+                                <span class="badge bg-warning">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    {% if not comment.approved %}
+                                    <button class="btn btn-sm btn-success" title="Approve Comment" 
+                                            onclick="approveComment('{{ comment._id }}')">
+                                        <i class="bi bi-check-circle"></i>
+                                    </button>
+                                    {% endif %}
+                                    <button class="btn btn-sm btn-outline-primary" title="View Details" 
+                                            onclick="viewComment('{{ comment._id }}')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" title="Delete Comment" 
+                                            onclick="deleteComment('{{ comment._id }}', '{{ comment.name }}')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comment Detail Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Comment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="commentModalBody">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="approveBtn" style="display: none;">
+                    <i class="bi bi-check-circle me-2"></i>Approve
+                </button>
+                <button type="button" class="btn btn-danger" id="deleteBtn">
+                    <i class="bi bi-trash me-2"></i>Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this comment?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete Comment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 50%;
+    font-size: 1.5rem;
+}
+
+.comment-content {
+    max-width: 300px;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+    font-size: 0.875rem;
+}
+
+.btn-group .btn {
+    padding: 0.25rem 0.5rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5em 0.75em;
+}
+
+/* Dark mode support */
+body.dark-mode .card {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+body.dark-mode .card-header {
+    border-bottom-color: #4a5568;
+}
+
+body.dark-mode .table {
+    color: #e2e8f0;
+}
+
+body.dark-mode .table-light {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .avatar {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-content {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-header {
+    border-bottom-color: #4a5568;
+}
+
+body.dark-mode .modal-footer {
+    border-top-color: #4a5568;
+}
+</style>
+
+<script>
+let currentCommentId = null;
+
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#commentsTable tbody tr');
+    
+    rows.forEach(row => {
+        const author = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        const comment = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+        
+        if (author.includes(searchTerm) || comment.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+// Status filter
+document.getElementById('statusFilter').addEventListener('change', function() {
+    const status = this.value;
+    const rows = document.querySelectorAll('#commentsTable tbody tr');
+    
+    rows.forEach(row => {
+        const commentStatus = row.dataset.status;
+        if (!status || commentStatus === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+// Sort functionality
+document.getElementById('sortBy').addEventListener('change', function() {
+    const sortBy = this.value;
+    const tbody = document.querySelector('#commentsTable tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    rows.sort((a, b) => {
+        let aVal, bVal;
+        
+        switch(sortBy) {
+            case 'date':
+                aVal = new Date(a.querySelector('td:nth-child(4)').textContent);
+                bVal = new Date(b.querySelector('td:nth-child(4)').textContent);
+                break;
+            case 'author':
+                aVal = a.dataset.author;
+                bVal = b.dataset.author;
+                break;
+            case 'status':
+                aVal = a.dataset.status;
+                bVal = b.dataset.status;
+                break;
+            default:
+                return 0;
+        }
+        
+        if (aVal < bVal) return -1;
+        if (aVal > bVal) return 1;
+        return 0;
+    });
+    
+    rows.forEach(row => tbody.appendChild(row));
+});
+
+// Select all functionality
+document.getElementById('selectAll').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.comment-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+    updateBulkActions();
+});
+
+// Individual checkbox change
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('comment-checkbox')) {
+        updateBulkActions();
+    }
+});
+
+function updateBulkActions() {
+    const selectedComments = document.querySelectorAll('.comment-checkbox:checked');
+    const bulkActions = document.getElementById('bulkActions');
+    const selectedCount = document.getElementById('selectedCount');
+    
+    if (selectedComments.length > 0) {
+        bulkActions.style.display = 'block';
+        selectedCount.textContent = selectedComments.length;
+    } else {
+        bulkActions.style.display = 'none';
+    }
+}
+
+function clearSelection() {
+    document.querySelectorAll('.comment-checkbox').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    document.getElementById('selectAll').checked = false;
+    updateBulkActions();
+}
+
+function bulkAction(action) {
+    const selectedComments = document.querySelectorAll('.comment-checkbox:checked');
+    if (selectedComments.length === 0) {
+        alert('Please select comments to perform this action');
+        return;
+    }
+    
+    const commentIds = Array.from(selectedComments).map(cb => cb.value);
+    
+    if (action === 'approve') {
+        if (confirm(`Are you sure you want to approve ${selectedComments.length} comments?`)) {
+            fetch('/admin/comments/bulk-action', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'approve',
+                    comment_ids: commentIds
+                })
+            }).then(() => {
+                location.reload();
+            });
+        }
+    } else if (action === 'delete') {
+        if (confirm(`Are you sure you want to delete ${selectedComments.length} comments?`)) {
+            fetch('/admin/comments/bulk-action', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'delete',
+                    comment_ids: commentIds
+                })
+            }).then(() => {
+                location.reload();
+            });
+        }
+    }
+}
+
+function approveComment(commentId) {
+    if (confirm('Are you sure you want to approve this comment?')) {
+        fetch(`/admin/comments/approve/${commentId}`, {
+            method: 'POST'
+        }).then(() => {
+            location.reload();
+        });
+    }
+}
+
+function deleteComment(commentId, authorName) {
+    currentCommentId = commentId;
+    document.getElementById('deleteForm').action = `/admin/comments/delete/${commentId}`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+
+function viewComment(commentId) {
+    // Find the comment data from the table
+    const row = document.querySelector(`tr[data-comment-id="${commentId}"]`);
+    if (!row) return;
+    
+    const name = row.querySelector('td:nth-child(2) h6').textContent;
+    const email = row.querySelector('td:nth-child(2) small').textContent;
+    const comment = row.querySelector('td:nth-child(3) p').textContent;
+    const date = row.querySelector('td:nth-child(4)').textContent;
+    const status = row.dataset.status;
+    
+    const modalBody = document.getElementById('commentModalBody');
+    modalBody.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Author:</strong> ${name}<br>
+                <strong>Email:</strong> ${email}<br>
+                <strong>Date:</strong> ${date}<br>
+                <strong>Status:</strong> 
+                <span class="badge bg-${status === 'approved' ? 'success' : 'warning'}">
+                    ${status === 'approved' ? 'Approved' : 'Pending'}
+                </span>
+            </div>
+            <div class="col-md-6">
+                <strong>Comment:</strong><br>
+                <div class="mt-2 p-3 bg-light rounded">
+                    ${comment}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const approveBtn = document.getElementById('approveBtn');
+    if (status === 'pending') {
+        approveBtn.style.display = 'inline-block';
+        approveBtn.onclick = () => approveComment(commentId);
+    } else {
+        approveBtn.style.display = 'none';
+    }
+    
+    const deleteBtn = document.getElementById('deleteBtn');
+    deleteBtn.onclick = () => deleteComment(commentId, name);
+    
+    const modal = new bootstrap.Modal(document.getElementById('commentModal'));
+    modal.show();
+}
+
+function showFullComment(commentId) {
+    // This would typically load the full comment via AJAX
+    // For now, we'll just show the comment detail modal
+    viewComment(commentId);
+}
+
+function refreshComments() {
+    location.reload();
+}
+</script>
+{% endblock %} 

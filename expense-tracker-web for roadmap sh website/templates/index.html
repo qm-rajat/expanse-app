@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="dashboard-container d-flex">
+  <!-- Sidebar placeholder (to be implemented in base.html) -->
+  <main class="dashboard-main flex-grow-1">
+    <div class="dashboard-header-modern d-flex align-items-center justify-content-between mb-4">
+  <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-speedometer2 text-primary display-5"></i>
+        <h2 class="fw-bold mb-0">Dashboard</h2>
+    </div>
+    <div>
+        <a href="/add" class="btn btn-lg btn-primary rounded-pill d-flex align-items-center gap-2">
+      <i class="bi bi-plus-circle"></i> Add Expense
+    </a>
+  </div>
+</div>
+    <div class="row g-4 mb-4">
+      <!-- Metric Cards -->
+      <div class="col-6 col-md-3">
+        <div class="metric-card card h-100 d-flex flex-column align-items-center justify-content-center p-3">
+          <div class="metric-icon bg-success bg-opacity-25 text-success mb-2"><i class="bi bi-cash-coin"></i></div>
+          <div class="metric-label">Total Income</div>
+          <div class="metric-value animated-counter" data-amount="{{ summary.total_income }}">0</div>
+          <div class="metric-currency">{{ summary.currency }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="metric-card card h-100 d-flex flex-column align-items-center justify-content-center p-3">
+          <div class="metric-icon bg-danger bg-opacity-25 text-danger mb-2"><i class="bi bi-currency-exchange"></i></div>
+          <div class="metric-label">Total Expenses</div>
+          <div class="metric-value animated-counter" data-amount="{{ summary.total_expenses }}">0</div>
+          <div class="metric-currency">{{ summary.currency }}</div>
+    </div>
+  </div>
+      <div class="col-6 col-md-3">
+        <div class="metric-card card h-100 d-flex flex-column align-items-center justify-content-center p-3">
+          <div class="metric-icon bg-warning bg-opacity-25 text-warning mb-2"><i class="bi bi-wallet2"></i></div>
+          <div class="metric-label">Balance</div>
+          <div class="metric-value animated-counter" data-amount="{{ summary.balance }}">0</div>
+          <div class="metric-currency">{{ summary.currency }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="metric-card card h-100 d-flex flex-column align-items-center justify-content-center p-3">
+          <div class="metric-icon bg-primary bg-opacity-25 text-primary mb-2"><i class="bi bi-bar-chart-fill"></i></div>
+          <div class="metric-label">Categories</div>
+          <div class="metric-value animated-counter" data-amount="{{ categories|length }}">0</div>
+  </div>
+      </div>
+    </div>
+    <div class="row g-4 mb-4">
+      <!-- Charts Section -->
+      <div class="col-lg-8 d-flex flex-column gap-4">
+        <div class="card chart-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0 text-info"><i class="bi bi-activity me-2"></i>Expense Trends</h5>
+            <button class="btn btn-sm btn-outline-secondary" aria-label="Download Expense Trends Chart" onclick="downloadChart('barChart')"><i class="bi bi-download"></i></button>
+          </div>
+          <div class="chart-container"><canvas id="barChart"></canvas></div>
+          <div id="barChartNoData" class="text-center text-muted small" style="display:none;">No data to display.</div>
+        </div>
+        <div class="card chart-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-graph-up-arrow me-2"></i>Monthly Expense Trend</h5>
+            <button class="btn btn-sm btn-outline-secondary" aria-label="Download Monthly Expense Trend Chart" onclick="downloadChart('monthlyExpenseTrend')"><i class="bi bi-download"></i></button>
+          </div>
+          <div class="chart-container"><canvas id="monthlyExpenseTrend"></canvas></div>
+          <div id="monthlyExpenseTrendNoData" class="text-center text-muted small" style="display:none;">No data to display.</div>
+        </div>
+        <div class="card chart-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0 text-success"><i class="bi bi-bar-chart-line me-2"></i>Income vs Expense</h5>
+            <button class="btn btn-sm btn-outline-secondary" aria-label="Download Income vs Expense Chart" onclick="downloadChart('incomeVsExpense')"><i class="bi bi-download"></i></button>
+          </div>
+          <div class="chart-container"><canvas id="incomeVsExpense"></canvas></div>
+          <div id="incomeVsExpenseNoData" class="text-center text-muted small" style="display:none;">No data to display.</div>
+  </div>
+        <div class="card chart-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0 text-warning"><i class="bi bi-piggy-bank me-2"></i>Savings Rate Over Time</h5>
+            <button class="btn btn-sm btn-outline-secondary" aria-label="Download Savings Rate Chart" onclick="downloadChart('savingsRate')"><i class="bi bi-download"></i></button>
+      </div>
+          <div class="chart-container"><canvas id="savingsRate"></canvas></div>
+          <div id="savingsRateNoData" class="text-center text-muted small" style="display:none;">No data to display.</div>
+    </div>
+  </div>
+      <div class="col-lg-4 d-flex flex-column gap-4">
+        <div class="card chart-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-pie-chart-fill me-2"></i>Spending by Category</h5>
+            <button class="btn btn-sm btn-outline-secondary" aria-label="Download Pie Chart" onclick="downloadChart('pieChart')"><i class="bi bi-download"></i></button>
+</div>
+          <div class="chart-container"><canvas id="pieChart" class="chart-canvas"></canvas></div>
+          <div id="pieChartNoData" class="text-center text-muted small" style="display:none;">No data to display.</div>
+    </div>
+        <div class="card p-4 modern-expenses-card mb-2">
+          <h5 class="fw-bold mb-3 text-danger d-flex align-items-center gap-2"><i class="bi bi-cash-stack me-2"></i>Biggest Single Expenses</h5>
+          <div class="table-responsive">
+            <table class="table modern-expenses-table align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Description</th>
+                  <th scope="col" class="text-end">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for exp in biggest_expenses %}
+                <tr>
+                  <td><span class="badge bg-secondary bg-opacity-75 rounded-pill px-3 py-2">{{ exp.date }}</span></td>
+                  <td><span class="d-flex align-items-center gap-2"><i class="bi bi-tag-fill text-primary"></i><span class="fw-semibold">{{ exp.category }}</span></span></td>
+                  <td class="text-muted">{{ exp.description }}</td>
+                  <td class="fw-bold text-danger text-end">{{ exp.amount }} {{ summary.currency }}</td>
+                </tr>
+        {% endfor %}
+                {% if not biggest_expenses %}
+                <tr><td colspan="4" class="text-center text-muted">No data available.</td></tr>
+      {% endif %}
+              </tbody>
+            </table>
+    </div>
+  </div>
+        <!-- Donut Chart: Expense vs Income Proportion -->
+        <div class="card chart-card p-4">
+          <h5 class="fw-bold mb-0 text-gradient d-flex align-items-center gap-2"><i class="bi bi-pie-chart-fill"></i>Expense vs Income</h5>
+          <div class="chart-container"><canvas id="donutChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="card p-4 recent-activity-card">
+      <h5 class="fw-bold mb-3 text-secondary"><i class="bi bi-clock-history me-2"></i>Recent Activity</h5>
+      <ul class="list-group list-group-flush">
+        {% for expense in expenses[:6] %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-tag-fill me-2 text-primary"></i>{{ expense.category }} <span class="text-muted small">({{ expense.date }})</span></span>
+          <span class="fw-semibold {{ 'text-danger' if expense.type == 'expense' else 'text-success' }}">{{ expense.amount }} {{ summary.currency }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+    <div class="row g-4 mb-4">
+      <!-- Existing charts ... -->
+      <div class="col-lg-6 d-flex flex-column gap-4">
+        <!-- Stacked Bar Chart -->
+        <div class="card chart-card p-4">
+          <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-bar-chart-steps me-2"></i>Monthly Expenses by Category</h5>
+          <div class="chart-container"><canvas id="stackedBarChart"></canvas></div>
+  </div>
+      </div>
+      <div class="col-lg-6 d-flex flex-column gap-4">
+        <!-- Horizontal Bar Chart -->
+        <div class="card chart-card p-4">
+          <h5 class="fw-bold mb-0 text-warning"><i class="bi bi-bar-chart me-2"></i>Top 10 Largest Expenses</h5>
+          <div class="chart-container"><canvas id="topExpensesChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<script>
+// Animated Counters
+(function() {
+  document.querySelectorAll('.animated-counter').forEach(function(el) {
+    const target = parseInt(el.getAttribute('data-amount')) || 0;
+    let count = 0;
+    const step = Math.ceil(target / 40) || 1;
+    function animate() {
+      count += step;
+      if (count >= target) {
+        el.textContent = target;
+      } else {
+        el.textContent = count;
+        requestAnimationFrame(animate);
+      }
+    }
+    animate();
+  });
+})();
+// Chart.js color helpers
+function isDarkMode() {
+  return document.body.classList.contains('dark-mode');
+}
+function chartTextColor() {
+  return isDarkMode() ? '#e2e8f0' : '#23272b';
+}
+function chartGridColor() {
+  return isDarkMode() ? '#374151' : '#e5e7eb';
+}
+function getGradient(ctx, color1, color2) {
+  const gradient = ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
+  gradient.addColorStop(0, color1);
+  gradient.addColorStop(1, color2);
+  return gradient;
+}
+function getAreaGradient(ctx, color1, color2) {
+  const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+  gradient.addColorStop(0, color1);
+  gradient.addColorStop(1, color2);
+  return gradient;
+}
+// Chart download helper
+function downloadChart(id) {
+  const chart = document.getElementById(id);
+  const link = document.createElement('a');
+  link.href = chart.toDataURL('image/png');
+  link.download = id + '.png';
+  link.click();
+}
+(function() {
+  // Pie Chart
+  if (document.getElementById('pieChart')) {
+    const ctx = document.getElementById('pieChart').getContext('2d');
+    const pieLabels = {{ chart_data.pie_labels|tojson }};
+    const pieData = {{ chart_data.pie_data|tojson }};
+    if (pieLabels.length === 1 && (pieLabels[0] === 'No Data' || pieData[0] === 0)) {
+      document.getElementById('pieChart').style.display = 'none';
+      document.getElementById('pieChartNoData').style.display = 'block';
+    } else {
+      document.getElementById('pieChart').style.display = 'block';
+      document.getElementById('pieChartNoData').style.display = 'none';
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: pieLabels,
+          datasets: [{
+            data: pieData,
+            backgroundColor: [
+              '#6366f1', '#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6', '#f59e42', '#10b981', '#ef4444'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          plugins: { legend: { position: 'bottom', labels: { color: chartTextColor() } } }
+        }
+      });
+    }
+  }
+  // Bar Chart (Expense Trends)
+  if (document.getElementById('barChart')) {
+    const ctx = document.getElementById('barChart').getContext('2d');
+    const barLabels = {{ chart_data.bar_labels|tojson }};
+    const barData = {{ chart_data.bar_data|tojson }};
+    if (barLabels.length === 1 && (barLabels[0] === 'No Data' || barData[0] === 0)) {
+      document.getElementById('barChart').style.display = 'none';
+      document.getElementById('barChartNoData').style.display = 'block';
+    } else {
+      document.getElementById('barChart').style.display = 'block';
+      document.getElementById('barChartNoData').style.display = 'none';
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: barLabels,
+          datasets: [{
+            label: 'Expenses',
+            data: barData,
+            borderColor: getGradient(ctx, '#6366f1', '#60a5fa'),
+            backgroundColor: getAreaGradient(ctx, 'rgba(99,102,241,0.25)', 'rgba(96,165,250,0.05)'),
+            fill: true,
+            tension: 0.3,
+            pointRadius: 2
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } },
+            y: { beginAtZero: true, ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } }
+          }
+        }
+      });
+    }
+  }
+  // Monthly Expense Trend (Line)
+  if (document.getElementById('monthlyExpenseTrend')) {
+    const ctx = document.getElementById('monthlyExpenseTrend').getContext('2d');
+    const months = {{ months|tojson }};
+    const monthlyExpenses = {{ monthly_expenses|tojson }};
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [{
+          label: 'Monthly Expenses',
+          data: monthlyExpenses,
+          borderColor: getGradient(ctx, '#f87171', '#6366f1'),
+          backgroundColor: getAreaGradient(ctx, 'rgba(248,113,113,0.18)', 'rgba(99,102,241,0.05)'),
+          fill: true,
+          tension: 0.3,
+          pointRadius: 2
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } },
+          y: { beginAtZero: true, ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } }
+        }
+      }
+    });
+  }
+  // Income vs Expense (Bar)
+  if (document.getElementById('incomeVsExpense')) {
+    const ctx = document.getElementById('incomeVsExpense').getContext('2d');
+    const months = {{ months|tojson }};
+    const monthlyIncome = {{ monthly_income|tojson }};
+    const monthlyExpenses = {{ monthly_expenses|tojson }};
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: months,
+        datasets: [
+          {
+            label: 'Income',
+            data: monthlyIncome,
+            backgroundColor: getGradient(ctx, '#34d399', '#60a5fa'),
+            borderRadius: 8
+          },
+          {
+            label: 'Expenses',
+            data: monthlyExpenses,
+            backgroundColor: getGradient(ctx, '#f87171', '#6366f1'),
+            borderRadius: 8
+          }
+        ]
+      },
+      options: {
+        plugins: { legend: { labels: { color: chartTextColor() } } },
+        scales: {
+          x: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } },
+          y: { beginAtZero: true, ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } }
+        }
+      }
+    });
+  }
+  // Savings Rate Over Time (Line)
+  if (document.getElementById('savingsRate')) {
+    const ctx = document.getElementById('savingsRate').getContext('2d');
+    const months = {{ months|tojson }};
+    const savingsRate = {{ monthly_savings_rate|tojson }};
+    new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: months,
+      datasets: [{
+          label: 'Savings Rate (%)',
+          data: savingsRate,
+          borderColor: getGradient(ctx, '#fbbf24', '#10b981'),
+          backgroundColor: getAreaGradient(ctx, 'rgba(251,191,36,0.18)', 'rgba(16,185,129,0.05)'),
+        fill: true,
+          tension: 0.3,
+          pointRadius: 2
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+          x: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } },
+          y: { beginAtZero: true, ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } }
+        }
+      }
+    });
+  }
+  // Stacked Bar Chart
+  if (document.getElementById('stackedBarChart')) {
+    const ctx = document.getElementById('stackedBarChart').getContext('2d');
+    const data = {{ stacked_bar_data|tojson }};
+    const colors = [
+      '#6366f1', '#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6', '#f59e42', '#10b981', '#ef4444',
+      '#818cf8', '#f472b6', '#f59e42', '#10b981', '#ef4444'
+    ];
+    data.datasets.forEach((ds, i) => {
+      ds.backgroundColor = colors[i % colors.length];
+      ds.borderRadius = 6;
+      ds.stack = 'Stack 0';
+    });
+    new Chart(ctx, {
+    type: 'bar',
+      data: data,
+      options: {
+        plugins: { legend: { labels: { color: chartTextColor() } } },
+        responsive: true,
+        scales: {
+          x: { stacked: true, ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } },
+          y: { stacked: true, beginAtZero: true, ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } }
+        }
+      }
+    });
+  }
+  // Horizontal Bar Chart (Top 10 Expenses)
+  if (document.getElementById('topExpensesChart')) {
+    const ctx = document.getElementById('topExpensesChart').getContext('2d');
+    new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{ top_expenses_data.labels|tojson }},
+      datasets: [{
+          label: 'Amount',
+          data: {{ top_expenses_data.data|tojson }},
+          backgroundColor: '#f87171',
+          borderRadius: 8
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+        plugins: { legend: { display: false } },
+      scales: {
+          x: { beginAtZero: true, ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } },
+          y: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } }
+        }
+      }
+    });
+  }
+  // Donut Chart: Expense vs Income Proportion
+  if (document.getElementById('donutChart')) {
+    const ctx = document.getElementById('donutChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+    data: {
+        labels: {{ donut_data.labels|tojson }},
+      datasets: [{
+          data: {{ donut_data.data|tojson }},
+          backgroundColor: [
+            'rgba(99,102,241,0.85)', // Expenses - blue
+            'rgba(34,197,94,0.85)'   // Income - green
+          ],
+          borderWidth: 6,
+          borderColor: [
+            'rgba(99,102,241,0.15)',
+            'rgba(34,197,94,0.15)'
+          ],
+          hoverOffset: 8
+      }]
+    },
+    options: {
+        cutout: '70%',
+        plugins: {
+          legend: { position: 'bottom', labels: { color: chartTextColor(), font: { weight: 'bold' } } },
+          tooltip: { enabled: true }
+        }
+      }
+    });
+  }
+})();
+</script>
+{% endblock %} 

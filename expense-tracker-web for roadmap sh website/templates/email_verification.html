@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - Expense Tracker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8fafc;
+            color: #333;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #60a5fa 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .tagline {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .greeting {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        .message {
+            font-size: 16px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .verification-code {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 2px solid #6366f1;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            display: inline-block;
+        }
+        .code-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #6366f1;
+            letter-spacing: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        .security-note {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 25px 0;
+            text-align: left;
+            border-radius: 0 8px 8px 0;
+        }
+        .security-note h4 {
+            margin: 0 0 8px 0;
+            color: #92400e;
+            font-size: 16px;
+        }
+        .security-note p {
+            margin: 0;
+            color: #92400e;
+            font-size: 14px;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 25px 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer-content {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .company-info {
+            margin-bottom: 15px;
+        }
+        .company-name {
+            font-weight: 600;
+            color: #374151;
+        }
+        .contact-info {
+            margin-top: 10px;
+        }
+        .contact-info a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+        .expiry-note {
+            background-color: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 12px;
+            margin: 20px 0;
+            text-align: left;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            color: #991b1b;
+        }
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                margin: 0;
+            }
+            .content {
+                padding: 30px 20px;
+            }
+            .code {
+                font-size: 28px;
+                letter-spacing: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">💰 Expense Tracker</div>
+            <div class="tagline">Smart Financial Management for Modern Life</div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">Hello {{ username }}! 👋</div>
+            
+            <div class="message">
+                Thank you for choosing Expense Tracker. To complete your login and ensure the security of your account, please enter the verification code below.
+            </div>
+            
+            <!-- Verification Code -->
+            <div class="verification-code">
+                <div class="code-label">Your Verification Code</div>
+                <div class="code">{{ verification_code }}</div>
+            </div>
+            
+            <!-- Security Note -->
+            <div class="security-note">
+                <h4>🔒 Security Reminder</h4>
+                <p>This code will expire in 5 minutes for your security. Never share this code with anyone, including our support team.</p>
+            </div>
+            
+            <!-- Expiry Note -->
+            <div class="expiry-note">
+                ⏰ <strong>Code expires in 5 minutes</strong> - Please enter it quickly to complete your login.
+            </div>
+            
+            <div class="message">
+                If you didn't request this verification code, please ignore this email or contact our support team immediately.
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <div class="company-info">
+                    <div class="company-name">Expense Tracker</div>
+                    <div>Your trusted partner in financial management</div>
+                </div>
+                
+                <div class="contact-info">
+                    <div>📧 <a href="mailto:expense.tracker.webapp0@gmail.com">expense.tracker.webapp0@gmail.com</a></div>
+                    <div>🌐 <a href="mailto:expense.tracker.webapp0@gmail.com">www.expensetracker.com</a></div>
+                </div>
+                
+                <div style="margin-top: 20px; font-size: 12px; color: #9ca3af;">
+                    This email was sent to {{ email }}. If you have any questions, please contact our support team.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

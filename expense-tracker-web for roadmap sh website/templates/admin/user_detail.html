@@ -1,0 +1,422 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 fw-bold text-primary mb-1">
+                <i class="bi bi-person-circle me-2"></i>User Details
+            </h1>
+            <p class="text-muted mb-0">Comprehensive user information and activity</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin.users') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Users
+            </a>
+            <button class="btn btn-outline-warning" onclick="editUser()">
+                <i class="bi bi-pencil me-2"></i>Edit User
+            </button>
+            <button class="btn btn-outline-danger" onclick="deleteUser('{{ user._id }}', '{{ user.username }}')">
+                <i class="bi bi-trash me-2"></i>Delete User
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- User Information -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person me-2"></i>User Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="avatar-large mx-auto mb-3">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <h4 class="fw-bold">{{ user.username }}</h4>
+                        <p class="text-muted mb-0">{{ user.email }}</p>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <small class="text-muted">User ID</small>
+                            <div class="fw-bold">{{ user._id }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Joined</small>
+                            <div class="fw-bold">{{ user._id.generation_time.strftime('%Y-%m-%d') if user._id.generation_time else 'N/A' }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Status</small>
+                            <div><span class="badge bg-success">Active</span></div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Last Login</small>
+                            <div class="fw-bold">Today</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-graph-up me-2"></i>Quick Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="stat-item text-center">
+                                <div class="stat-number text-primary fw-bold">{{ stats.expense_count }}</div>
+                                <div class="stat-label text-muted">Expenses</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item text-center">
+                                <div class="stat-number text-success fw-bold">{{ stats.income_count }}</div>
+                                <div class="stat-label text-muted">Income</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item text-center">
+                                <div class="stat-number text-danger fw-bold">₹{{ "%.2f"|format(stats.total_expenses) }}</div>
+                                <div class="stat-label text-muted">Total Spent</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item text-center">
+                                <div class="stat-number text-info fw-bold">₹{{ "%.2f"|format(stats.total_income) }}</div>
+                                <div class="stat-label text-muted">Total Income</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <div class="balance-display">
+                            <small class="text-muted">Current Balance</small>
+                            <div class="balance-amount fw-bold fs-4 {{ 'text-success' if stats.balance >= 0 else 'text-danger' }}">
+                                ₹{{ "%.2f"|format(stats.balance) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Activity -->
+        <div class="col-lg-8">
+            <!-- Category Breakdown -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pie-chart me-2"></i>Spending by Category
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <canvas id="categoryChart" height="200"></canvas>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="category-list">
+                                {% for category, amount in stats.categories.items() %}
+                                <div class="category-item d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="category-color me-2" style="background-color: {{ ['#6366f1', '#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6', '#f59e42', '#10b981', '#ef4444'][loop.index0 % 10] }};"></div>
+                                        <span class="fw-medium">{{ category }}</span>
+                                    </div>
+                                    <span class="fw-bold text-danger">₹{{ "%.2f"|format(amount) }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Expenses -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-clock-history me-2"></i>Recent Transactions
+                        </h5>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-outline-primary active" onclick="filterTransactions('all')">All</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="filterTransactions('expense')">Expenses</button>
+                            <button class="btn btn-sm btn-outline-success" onclick="filterTransactions('income')">Income</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="transactionsTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for expense in expenses %}
+                                <tr data-type="{{ expense.type }}">
+                                    <td>
+                                        <span class="text-muted">{{ expense.date }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-medium">{{ expense.description }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ expense.category }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ 'danger' if expense.type == 'expense' else 'success' }}">
+                                            {{ expense.type|title }}
+                                        </span>
+                                    </td>
+                                    <td class="fw-bold text-{{ 'danger' if expense.type == 'expense' else 'success' }}">
+                                        ₹{{ "%.2f"|format(expense.amount) }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete user <strong id="deleteUserName"></strong>?</p>
+                <p class="text-danger">This action cannot be undone and will delete all user data including expenses, budgets, and settings.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-large {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 50%;
+    font-size: 3rem;
+    color: #6366f1;
+}
+
+.stat-item {
+    padding: 1rem;
+    border-radius: 8px;
+    background: #f8f9fa;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.balance-display {
+    padding: 1rem;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.category-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.category-item {
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.category-item:hover {
+    background-color: #f8f9fa;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.card-header {
+    background: none;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.875rem;
+}
+
+.table td {
+    vertical-align: middle;
+    font-size: 0.875rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5em 0.75em;
+}
+
+.btn-group .btn {
+    font-size: 0.875rem;
+}
+
+/* Dark mode support */
+body.dark-mode .card {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+body.dark-mode .card-header {
+    border-bottom-color: #4a5568;
+}
+
+body.dark-mode .avatar-large {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .stat-item {
+    background: #4a5568;
+}
+
+body.dark-mode .balance-display {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+}
+
+body.dark-mode .table {
+    color: #e2e8f0;
+}
+
+body.dark-mode .table-light {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .category-item:hover {
+    background-color: #4a5568;
+}
+
+body.dark-mode .modal-content {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-header {
+    border-bottom-color: #4a5568;
+}
+
+body.dark-mode .modal-footer {
+    border-top-color: #4a5568;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Category Chart
+const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+const categoryData = {{ stats.categories|tojson }};
+const categoryLabels = Object.keys(categoryData);
+const categoryValues = Object.values(categoryData);
+
+new Chart(categoryCtx, {
+    type: 'doughnut',
+    data: {
+        labels: categoryLabels,
+        datasets: [{
+            data: categoryValues,
+            backgroundColor: [
+                '#6366f1', '#60a5fa', '#34d399', '#fbbf24', '#f87171',
+                '#a78bfa', '#f472b6', '#f59e42', '#10b981', '#ef4444'
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+// Transaction filtering
+function filterTransactions(type) {
+    const rows = document.querySelectorAll('#transactionsTable tbody tr');
+    const buttons = document.querySelectorAll('.btn-group .btn');
+    
+    // Update button states
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    rows.forEach(row => {
+        if (type === 'all' || row.dataset.type === type) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Delete user function
+function deleteUser(userId, username) {
+    document.getElementById('deleteUserName').textContent = username;
+    document.getElementById('deleteForm').action = `/admin/users/${userId}/delete`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+
+// Edit user function
+function editUser() {
+    // Implement edit functionality
+    alert('Edit functionality will be implemented here');
+}
+</script>
+{% endblock %} 

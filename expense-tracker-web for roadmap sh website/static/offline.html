@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Offline - Expense Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #232946 100%);
+      color: #f8fafc;
+      text-align: center;
+      padding: 1.5em 1em 1em 1em;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .offline-logo {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 0.8em;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(80,80,160,0.10);
+    }
+    .offline-illustration {
+      width: 140px;
+      margin: 0 auto 0.8em auto;
+      display: block;
+      animation: floaty 2.5s ease-in-out infinite;
+    }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    h1 {
+      color: #6366f1;
+      font-size: 1.8em;
+      margin-bottom: 0.2em;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .offline-joke {
+      color: #fbbf24;
+      font-size: 1em;
+      margin: 0.8em 0 1em 0;
+      font-style: italic;
+      min-height: 1.8em;
+      transition: color 0.3s;
+    }
+    p {
+      color: #cbd5e1;
+      font-size: 1em;
+      margin-bottom: 1.2em;
+      line-height: 1.4;
+    }
+    .retry-btn {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6em 1.5em;
+      font-size: 1em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+      transition: background 0.2s, transform 0.2s;
+      animation: bounce 1.8s infinite;
+      font-weight: 600;
+      margin-bottom: 1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .retry-btn:hover {
+      background: #4f46e5;
+      transform: scale(1.06) rotate(-2deg);
+      animation: none;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+      50% { transform: translateY(0); }
+      70% { transform: translateY(-3px); }
+    }
+    .offline-analytics {
+      margin-top: 1.2em;
+      color: #94a3b8;
+      font-size: 0.9em;
+    }
+    .offline-footer {
+      margin-top: 1.5em;
+      color: #64748b;
+      font-size: 0.9em;
+      opacity: 0.7;
+    }
+    /* Breakout game styles */
+    #breakout-container {
+      margin: 1.2em auto 0.8em auto;
+      width: 280px;
+      max-width: 95vw;
+      background: #232946;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(80,80,160,0.10);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8em 0 1em 0;
+      position: relative;
+    }
+    #breakout-canvas {
+      background: #181a2a;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(80,80,160,0.10);
+      display: block;
+      margin: 0 auto;
+      touch-action: none;
+    }
+    #breakout-ui {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.95em;
+      color: #fbbf24;
+      font-weight: 600;
+      margin: 0.3em 0 0.2em 0;
+      padding: 0 0.8em;
+    }
+    #breakout-score {
+      color: #fbbf24;
+    }
+    #breakout-lives {
+      color: #6366f1;
+    }
+    #breakout-best {
+      color: #22d3ee;
+      font-size: 0.9em;
+      margin-left: 0.3em;
+    }
+    #breakout-end, #breakout-start {
+      width: 100%;
+      text-align: center;
+      color: #fff;
+      font-size: 1.1em;
+      margin-top: 0.5em;
+      display: none;
+      position: absolute;
+      left: 0; top: 0;
+      background: rgba(30,41,59,0.97);
+      border-radius: 12px;
+      z-index: 10;
+      padding: 1.5em 0.8em 0.8em 0.8em;
+      animation: fadein 0.4s;
+    }
+    @keyframes fadein {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    #breakout-end button, #breakout-start button {
+      margin-top: 0.8em;
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5em 1.2em;
+      font-size: 0.95em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+      transition: background 0.2s, transform 0.2s;
+      font-weight: 600;
+    }
+    #breakout-end button:hover, #breakout-start button:hover {
+      background: #4f46e5;
+      transform: scale(1.06);
+    }
+    .confetti {
+      position: absolute;
+      pointer-events: none;
+      z-index: 20;
+      width: 6px; height: 12px;
+      border-radius: 2px;
+      opacity: 0.85;
+      animation: confetti-fall 1.2s linear forwards;
+    }
+    @keyframes confetti-fall {
+      to { transform: translateY(260px) rotate(360deg); opacity: 0.2; }
+    }
+    @media (max-width: 400px) {
+      #breakout-container { width: 98vw; }
+      #breakout-canvas { width: 96vw !important; }
+    }
+  </style>
+</head>
+<body>
+  <img src="imges/icon-512.png" alt="Expense Tracker Logo" class="offline-logo" onerror="this.style.display='none'">
+  <!-- Fun animated SVG illustration -->
+  <svg class="offline-illustration" viewBox="0 0 220 180" fill="none">
+    <ellipse cx="110" cy="170" rx="70" ry="10" fill="#232946" opacity=".3"/>
+    <g>
+      <rect x="40" y="40" width="140" height="90" rx="16" fill="#6366f1"/>
+      <rect x="55" y="55" width="110" height="60" rx="8" fill="#fff"/>
+      <rect x="70" y="70" width="80" height="10" rx="5" fill="#c7d2fe"/>
+      <rect x="70" y="90" width="50" height="10" rx="5" fill="#c7d2fe"/>
+      <circle cx="170" cy="60" r="7" fill="#fbbf24"/>
+      <circle cx="60" cy="110" r="5" fill="#fbbf24"/>
+      <rect x="120" y="110" width="30" height="8" rx="4" fill="#6366f1"/>
+      <rect x="80" y="110" width="30" height="8" rx="4" fill="#6366f1"/>
+      <rect x="100" y="120" width="20" height="6" rx="3" fill="#6366f1"/>
+    </g>
+    <!-- Funny face -->
+    <ellipse cx="110" cy="100" rx="12" ry="7" fill="#6366f1"/>
+    <ellipse cx="105" cy="98" rx="2.5" ry="2.5" fill="#232946"/>
+    <ellipse cx="115" cy="98" rx="2.5" ry="2.5" fill="#232946"/>
+    <path d="M107 104 Q110 107 113 104" stroke="#232946" stroke-width="1.5" fill="none"/>
+  </svg>
+  <h1>Oops! No Internet...</h1>
+  <div class="offline-joke" id="offlineJoke">Loading tip...</div>
+  <p>Looks like your connection took a coffee break.<br>Don't worry, your data is safe!</p>
+  <button class="retry-btn" onclick="window.location.reload()">
+    <span>🔄</span> Retry
+  </button>
+
+  <!-- Breakout game container -->
+  <div id="breakout-container">
+    <div id="breakout-ui">
+      <span id="breakout-score">Score: 0</span>
+      <span id="breakout-lives">Lives: 3</span>
+      <span id="breakout-best"></span>
+    </div>
+    <canvas id="breakout-canvas" width="260" height="180"></canvas>
+    <div id="breakout-end"></div>
+    <div id="breakout-start"></div>
+  </div>
+
+  <div class="offline-analytics" id="offlineAnalytics"></div>
+  <div class="offline-footer">Expense Tracker Offline Mode &mdash; Stay productive!</div>
+  <script>
+    // Simple offline analytics counter
+    let count = parseInt(localStorage.getItem('offlineVisits') || '0', 10) + 1;
+    localStorage.setItem('offlineVisits', count);
+    document.getElementById('offlineAnalytics').textContent = `You've seen this offline page ${count} time${count > 1 ? 's' : ''}.`;
+
+    // Random offline tips/jokes
+    const jokes = [
+      "Why did the computer get cold? It forgot to close its Windows!",
+      "Tip: Now's a great time to organize your receipts (or your desk).",
+      "No WiFi? No problem! Practice your budgeting skills on paper.",
+      "Offline mode: Because even the internet needs a break.",
+      "Why did the expense cross the road? To get to the other budget!",
+      "Pro tip: Staring at the screen won't bring the internet back (we tried).",
+      "You're offline, but your savings are still online!",
+      "Try explaining to your pet why you're talking to your computer right now.",
+      "Fun fact: You can't overspend while offline!",
+      "If you can read this, you're officially a member of the Offline Club!"
+    ];
+    document.getElementById('offlineJoke').textContent = jokes[Math.floor(Math.random() * jokes.length)];
+
+    // --- Breakout/Brick Block Game ---
+    const canvas = document.getElementById('breakout-canvas');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('breakout-score');
+    const livesEl = document.getElementById('breakout-lives');
+    const bestEl = document.getElementById('breakout-best');
+    const endEl = document.getElementById('breakout-end');
+    const startEl = document.getElementById('breakout-start');
+    let paddleW = 50, paddleH = 8, paddleX = (canvas.width-50)/2;
+    let rightPressed = false, leftPressed = false;
+    let ballR = 6, ballX = canvas.width/2, ballY = canvas.height-25, ballDX = 2, ballDY = -2;
+    let brickRowCount = 3, brickColCount = 6, brickW = 35, brickH = 12, brickP = 6;
+    let bricks = [];
+    let score = 0, lives = 3, gameOver = false, bestScore = parseInt(localStorage.getItem('breakoutBest')||'0',10);
+    let started = false;
+
+    function resetBricks() {
+      bricks = [];
+      for(let c=0; c<brickColCount; c++) {
+        bricks[c] = [];
+        for(let r=0; r<brickRowCount; r++) {
+          bricks[c][r] = { x: 0, y: 0, status: 1 };
+        }
+      }
+    }
+    function drawBricks() {
+      for(let c=0; c<brickColCount; c++) {
+        for(let r=0; r<brickRowCount; r++) {
+          if(bricks[c][r].status==1) {
+            let brickX = c*(brickW+brickP)+18;
+            let brickY = r*(brickH+brickP)+20;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickW, brickH);
+            ctx.fillStyle = ["#6366f1","#fbbf24","#60a5fa"][r%3];
+            ctx.fill();
+            ctx.closePath();
+          }
+        }
+      }
+    }
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(ballX, ballY, ballR, 0, Math.PI*2);
+      ctx.fillStyle = "#ffe066";
+      ctx.fill();
+      ctx.strokeStyle = "#b45309";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.closePath();
+    }
+    function drawPaddle() {
+      ctx.beginPath();
+      ctx.rect(paddleX, canvas.height-paddleH-6, paddleW, paddleH);
+      ctx.fillStyle = "#6366f1";
+      ctx.shadowColor = '#6366f1';
+      ctx.shadowBlur = 6;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.closePath();
+    }
+    function draw() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      drawBricks();
+      drawBall();
+      drawPaddle();
+      collisionDetection();
+      ballX += ballDX;
+      ballY += ballDY;
+      // Wall collision
+      if(ballX+ballR>canvas.width || ballX-ballR<0) ballDX=-ballDX;
+      if(ballY-ballR<0) ballDY=-ballDY;
+      // Paddle collision
+      if(ballY+ballR>canvas.height-paddleH-6 && ballX>paddleX && ballX<paddleX+paddleW) {
+        ballDY=-ballDY;
+        ballY=canvas.height-paddleH-6-ballR;
+      }
+      // Bottom collision
+      if(ballY+ballR>canvas.height) {
+        lives--;
+        livesEl.textContent = 'Lives: '+lives;
+        if(lives==0) return endGame();
+        ballX=canvas.width/2; ballY=canvas.height-25; ballDX=2*(Math.random()>0.5?1:-1); ballDY=-2;
+        paddleX=(canvas.width-paddleW)/2;
+      }
+      // Paddle movement
+      if(rightPressed && paddleX<canvas.width-paddleW) paddleX+=5;
+      if(leftPressed && paddleX>0) paddleX-=5;
+      if(!gameOver) requestAnimationFrame(draw);
+    }
+    function collisionDetection() {
+      for(let c=0; c<brickColCount; c++) {
+        for(let r=0; r<brickRowCount; r++) {
+          let b=bricks[c][r];
+          if(b.status==1) {
+            if(ballX>b.x && ballX<b.x+brickW && ballY>b.y && ballY<b.y+brickH) {
+              ballDY=-ballDY;
+              b.status=0;
+              score++;
+              scoreEl.textContent = 'Score: '+score;
+              if(score>bestScore) { bestScore=score; localStorage.setItem('breakoutBest',bestScore); bestEl.textContent = 'Best: '+bestScore; }
+              if(score==brickRowCount*brickColCount) return endGame(true);
+            }
+          }
+        }
+      }
+    }
+    function confetti() {
+      for(let i=0;i<24;i++) {
+        let c=document.createElement('div');
+        c.className='confetti';
+        c.style.left=(canvas.offsetLeft+canvas.width/2+Math.random()*100-50)+'px';
+        c.style.top=(canvas.offsetTop+30+Math.random()*30)+'px';
+        c.style.background=["#6366f1","#fbbf24","#60a5fa","#f87171"][i%4];
+        c.style.transform=`rotate(${Math.random()*360}deg)`;
+        c.style.animationDuration = (1+Math.random()*0.7)+'s';
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),1400);
+      }
+    }
+    function endGame(win) {
+      gameOver=true;
+      endEl.style.display='block';
+      if(win) {
+        confetti();
+        endEl.innerHTML = `<div>🎉 You Win!<br>Score: <b>${score}</b></div><button onclick='startBreakout()'>Play Again</button>`;
+      } else {
+        endEl.innerHTML = `<div style='font-size:1.5em;'>😢</div><div>Game Over!<br>Score: <b>${score}</b></div><button onclick='startBreakout()'>Try Again</button>`;
+      }
+    }
+    function showStart() {
+      startEl.style.display='block';
+      startEl.innerHTML = `<div style='font-size:1.1em;margin-bottom:0.8em;'>🕹️ Brick Breaker</div><div style='color:#fbbf24;margin-bottom:0.8em;font-size:0.9em;'>Move paddle with mouse/touch/arrows.<br>Break all bricks to win!</div><button onclick='startBreakout()'>Start Game</button>`;
+    }
+    function startBreakout() {
+      score=0; lives=3; gameOver=false; started=true;
+      scoreEl.textContent = 'Score: 0';
+      livesEl.textContent = 'Lives: 3';
+      bestEl.textContent = bestScore ? 'Best: '+bestScore : '';
+      endEl.style.display='none';
+      startEl.style.display='none';
+      paddleX=(canvas.width-paddleW)/2;
+      ballX=canvas.width/2; ballY=canvas.height-25; ballDX=2*(Math.random()>0.5?1:-1); ballDY=-2;
+      resetBricks();
+      draw();
+    }
+    // Mouse/touch controls
+    document.addEventListener('mousemove', e => {
+      if(!started) return;
+      let rect = canvas.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      paddleX = Math.max(0, Math.min(canvas.width-paddleW, x-paddleW/2));
+    });
+    canvas.addEventListener('touchmove', e => {
+      if(!started) return;
+      let rect = canvas.getBoundingClientRect();
+      let x = e.touches[0].clientX - rect.left;
+      paddleX = Math.max(0, Math.min(canvas.width-paddleW, x-paddleW/2));
+    });
+    document.addEventListener('keydown', e => {
+      if(!started) return;
+      if(e.key=='ArrowRight') rightPressed=true;
+      if(e.key=='ArrowLeft') leftPressed=true;
+    });
+    document.addEventListener('keyup', e => {
+      if(!started) return;
+      if(e.key=='ArrowRight') rightPressed=false;
+      if(e.key=='ArrowLeft') leftPressed=false;
+    });
+    // Show start overlay on load
+    showStart();
+  </script>
+</body>
+</html> 

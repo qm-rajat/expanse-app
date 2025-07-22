@@ -1,0 +1,386 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="mb-4"><i class="bi bi-gear-fill text-primary me-2"></i>Settings</h2>
+            
+            <!-- Currency & Regional Settings -->
+            <div class="card shadow-sm border-0 mb-4 settings-section">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0"><i class="bi bi-currency-exchange text-success me-2"></i>Currency & Regional</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('main.update_settings') }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Default Currency</label>
+                                <select class="form-select" name="default_currency">
+                                    <option value="INR" {% if settings.default_currency == 'INR' %}selected{% endif %}>🇮🇳 Indian Rupee (INR)</option>
+                                    <option value="USD" {% if settings.default_currency == 'USD' %}selected{% endif %}>🇺🇸 US Dollar (USD)</option>
+                                    <option value="EUR" {% if settings.default_currency == 'EUR' %}selected{% endif %}>🇪🇺 Euro (EUR)</option>
+                                    <option value="GBP" {% if settings.default_currency == 'GBP' %}selected{% endif %}>🇬🇧 British Pound (GBP)</option>
+                                    <option value="JPY" {% if settings.default_currency == 'JPY' %}selected{% endif %}>🇯🇵 Japanese Yen (JPY)</option>
+                                    <option value="CAD" {% if settings.default_currency == 'CAD' %}selected{% endif %}>🇨🇦 Canadian Dollar (CAD)</option>
+                                    <option value="AUD" {% if settings.default_currency == 'AUD' %}selected{% endif %}>🇦🇺 Australian Dollar (AUD)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Date Format</label>
+                                <select class="form-select" name="date_format">
+                                    <option value="YYYY-MM-DD" {% if settings.date_format == 'YYYY-MM-DD' %}selected{% endif %}>YYYY-MM-DD</option>
+                                    <option value="DD/MM/YYYY" {% if settings.date_format == 'DD/MM/YYYY' %}selected{% endif %}>DD/MM/YYYY</option>
+                                    <option value="MM/DD/YYYY" {% if settings.date_format == 'MM/DD/YYYY' %}selected{% endif %}>MM/DD/YYYY</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-2"></i>Save Currency Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Theme & Appearance -->
+            <div class="card shadow-sm border-0 mb-4 settings-section">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0"><i class="bi bi-palette text-warning me-2"></i>Theme & Appearance</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Theme Mode</label>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-outline-primary" onclick="setTheme(false)">
+                                    <i class="bi bi-sun me-2"></i>Light Mode
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="setTheme(true)">
+                                    <i class="bi bi-moon me-2"></i>Dark Mode
+                                </button>
+                            </div>
+                            <small class="text-muted">Use the toggle button in the navbar for quick switching</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Color Scheme</label>
+                            <select class="form-select" id="colorScheme">
+                                <option value="default">Default (Purple/Blue)</option>
+                                <option value="green">Green Theme</option>
+                                <option value="orange">Orange Theme</option>
+                                <option value="red">Red Theme</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div class="card shadow-sm border-0 mb-4 settings-section">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0"><i class="bi bi-bell text-info me-2"></i>Notifications</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('main.update_notifications') }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="email_notifications" id="emailNotif" {% if settings.email_notifications %}checked{% endif %}>
+                                    <label class="form-check-label" for="emailNotif">
+                                        Email Notifications
+                                    </label>
+                                </div>
+                                <small class="text-muted">Receive notifications about budget alerts and reports</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="browser_notifications" id="browserNotif" {% if settings.browser_notifications %}checked{% endif %}>
+                                    <label class="form-check-label" for="browserNotif">
+                                        Browser Notifications
+                                    </label>
+                                </div>
+                                <small class="text-muted">Get notifications in your browser</small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="budget_alerts" id="budgetAlerts" {% if settings.budget_alerts %}checked{% endif %}>
+                                    <label class="form-check-label" for="budgetAlerts">
+                                        Budget Alerts
+                                    </label>
+                                </div>
+                                <small class="text-muted">Get notified when you're close to budget limits</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="weekly_reports" id="weeklyReports" {% if settings.weekly_reports %}checked{% endif %}>
+                                    <label class="form-check-label" for="weeklyReports">
+                                        Weekly Reports
+                                    </label>
+                                </div>
+                                <small class="text-muted">Receive weekly expense summaries</small>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-info">
+                            <i class="bi bi-check-circle me-2"></i>Save Notification Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Privacy & Security -->
+            <div class="card shadow-sm border-0 mb-4 settings-section">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0"><i class="bi bi-shield-check text-danger me-2"></i>Privacy & Security</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="two_factor_auth" id="twoFactor" checked disabled>
+                                <label class="form-check-label" for="twoFactor">
+                                    Two-Factor Authentication
+                                </label>
+                            </div>
+                            <small class="text-muted">Always enabled for your security</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data_analytics" id="dataAnalytics" {% if settings.data_analytics %}checked{% endif %}>
+                                <label class="form-check-label" for="dataAnalytics">
+                                    Data Analytics
+                                </label>
+                            </div>
+                            <small class="text-muted">Help us improve by sharing anonymous usage data</small>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Security Note:</strong> Your data is encrypted and stored securely. We never share your personal information with third parties.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export & Data Management -->
+            <div class="card shadow-sm border-0 mb-4 settings-section">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0"><i class="bi bi-download text-secondary me-2"></i>Export & Data Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Default Export Format</label>
+                            <select class="form-select" name="export_format">
+                                <option value="csv" {% if settings.export_format == 'csv' %}selected{% endif %}>CSV (Excel compatible)</option>
+                                <option value="pdf" {% if settings.export_format == 'pdf' %}selected{% endif %}>PDF (Printable)</option>
+                                <option value="json" {% if settings.export_format == 'json' %}selected{% endif %}>JSON (Developer friendly)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Auto-backup Frequency</label>
+                            <select class="form-select" name="backup_frequency">
+                                <option value="never" {% if settings.backup_frequency == 'never' %}selected{% endif %}>Never</option>
+                                <option value="weekly" {% if settings.backup_frequency == 'weekly' %}selected{% endif %}>Weekly</option>
+                                <option value="monthly" {% if settings.backup_frequency == 'monthly' %}selected{% endif %}>Monthly</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('main.export_csv') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-file-earmark-spreadsheet me-2"></i>Export All Data (CSV)
+                        </a>
+                        <a href="{{ url_for('main.export_pdf') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-file-earmark-pdf me-2"></i>Export All Data (PDF)
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="card shadow-sm border-0 border-danger danger-zone">
+                <div class="card-header bg-transparent border-danger">
+                    <h5 class="mb-0 text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Danger Zone</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <button type="button" class="btn btn-outline-danger" id="deleteAccountBtn" data-url="{{ url_for('main.delete_account') }}">
+                                <i class="bi bi-trash me-2"></i>Delete Account
+                            </button>
+                            <small class="text-muted d-block mt-1">This action cannot be undone</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button type="button" class="btn btn-outline-warning" id="resetSettingsBtn" data-url="{{ url_for('main.reset_settings') }}">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Reset All Settings
+                            </button>
+                            <small class="text-muted d-block mt-1">Reset to default values</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Theme switching functionality
+function setTheme(isDark) {
+    const html = document.documentElement;
+    if (isDark) {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        html.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+// Color scheme functionality
+document.getElementById('colorScheme').addEventListener('change', function() {
+    const scheme = this.value;
+    const root = document.documentElement;
+    
+    // Reset to default colors
+    root.style.setProperty('--bs-primary', '#6366f1');
+    root.style.setProperty('--bs-secondary', '#6c757d');
+    
+    // Apply selected color scheme
+    switch(scheme) {
+        case 'green':
+            root.style.setProperty('--bs-primary', '#10b981');
+            root.style.setProperty('--bs-secondary', '#059669');
+            break;
+        case 'orange':
+            root.style.setProperty('--bs-primary', '#f59e0b');
+            root.style.setProperty('--bs-secondary', '#d97706');
+            break;
+        case 'red':
+            root.style.setProperty('--bs-primary', '#ef4444');
+            root.style.setProperty('--bs-secondary', '#dc2626');
+            break;
+    }
+    
+    localStorage.setItem('colorScheme', scheme);
+});
+
+// Load saved preferences on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Load theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+    
+    // Load color scheme
+    const savedScheme = localStorage.getItem('colorScheme');
+    if (savedScheme) {
+        document.getElementById('colorScheme').value = savedScheme;
+        document.getElementById('colorScheme').dispatchEvent(new Event('change'));
+    }
+    
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+
+// Form validation
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+        }
+    });
+});
+
+// Password confirmation validation
+document.querySelectorAll('input[name="confirm_password"]').forEach(input => {
+    input.addEventListener('input', function() {
+        const password = document.querySelector('input[name="new_password"]');
+        if (password && this.value !== password.value) {
+            this.setCustomValidity('Passwords do not match');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+});
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Auto-save form data (optional feature)
+let autoSaveTimeout;
+document.querySelectorAll('input, select, textarea').forEach(element => {
+    element.addEventListener('input', function() {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+            // Save form data to localStorage
+            const form = this.closest('form');
+            if (form) {
+                const formData = new FormData(form);
+                const data = {};
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+                localStorage.setItem('form_autosave_' + form.action, JSON.stringify(data));
+            }
+        }, 1000);
+    });
+});
+
+// Restore auto-saved data
+document.querySelectorAll('form').forEach(form => {
+    const savedData = localStorage.getItem('form_autosave_' + form.action);
+    if (savedData) {
+        try {
+            const data = JSON.parse(savedData);
+            Object.keys(data).forEach(key => {
+                const field = form.querySelector(`[name="${key}"]`);
+                if (field && !field.value) {
+                    field.value = data[key];
+                }
+            });
+        } catch (e) {
+            console.log('Could not restore auto-saved data');
+        }
+    }
+});
+
+// Danger zone button handlers
+document.getElementById('deleteAccountBtn').addEventListener('click', function() {
+    if (confirm('Are you sure? This will delete all your data permanently.')) {
+        window.location.href = this.getAttribute('data-url');
+    }
+});
+
+document.getElementById('resetSettingsBtn').addEventListener('click', function() {
+    if (confirm('Are you sure? This will reset all your settings to default.')) {
+        window.location.href = this.getAttribute('data-url');
+    }
+});
+</script>
+{% endblock %} 

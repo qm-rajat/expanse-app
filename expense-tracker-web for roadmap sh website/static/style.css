@@ -1,0 +1,1035 @@
+.welcome-banner {
+  background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%) !important;
+  border-radius: 1.5rem !important;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+.summary-card .icon-circle {
+  width: 3.2rem;
+  height: 3.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  border-radius: 50%;
+}
+.summary-badge {
+  font-size: 1.1rem;
+  padding: 0.5em 1em;
+  border-radius: 2em;
+  margin-right: 0.5em;
+  background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px 0 rgba(80, 80, 160, 0.10);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.summary-badge.income {
+  background: linear-gradient(90deg, #34d399 0%, #10b981 100%);
+}
+.summary-badge.expense {
+  background: linear-gradient(90deg, #f87171 0%, #ef4444 100%);
+}
+.summary-badge.balance {
+  background: linear-gradient(90deg, #fbbf24 0%, #f59e42 100%);
+  color: #23272b;
+}
+.dropdown-menu {
+  z-index: 1055 !important;
+}
+
+/* Profile and Settings Styles */
+.profile-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.profile-card:hover {
+    transform: translateY(-2px);
+}
+
+.settings-section {
+    border-left: 4px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.settings-section:hover {
+    border-left-color: #6366f1;
+}
+
+.danger-zone {
+    border-color: #dc3545 !important;
+}
+
+.danger-zone .card-header {
+    border-color: #dc3545 !important;
+}
+
+/* Theme switching styles */
+[data-theme="dark"] {
+    --bg-primary: #0f1419;
+    --bg-secondary: #1a1f2e;
+    --bg-tertiary: #2d3748;
+    --text-primary: #e2e8f0;
+    --text-secondary: #a0aec0;
+    --text-muted: #718096;
+    --border-color: #4a5568;
+    --border-light: #2d3748;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --card-bg: #1a1f2e;
+    --input-bg: #2d3748;
+    --input-border: #4a5568;
+    --input-focus: #6366f1;
+    --success-color: #48bb78;
+    --warning-color: #ed8936;
+    --danger-color: #f56565;
+    --info-color: #4299e1;
+}
+
+/* Dark mode body and general styles */
+body.dark-mode {
+    background: linear-gradient(135deg, #181a2a 0%, #23272b 100%) !important;
+    color: var(--text-primary) !important;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode navbar */
+.navbar.dark-mode {
+    background: rgba(26, 31, 46, 0.95) !important;
+    backdrop-filter: blur(12px);
+    border-color: rgba(99, 102, 241, 0.2) !important;
+}
+
+.navbar.dark-mode .nav-link {
+    color: var(--text-primary) !important;
+}
+
+.navbar.dark-mode .nav-link:hover,
+.navbar.dark-mode .nav-link.active {
+    background: #6366f1 !important;
+    color: #fff !important;
+}
+
+.navbar.dark-mode .dropdown-menu {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+.navbar.dark-mode .dropdown-item {
+    color: var(--text-primary);
+}
+
+.navbar.dark-mode .dropdown-item:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+/* Dark mode cards */
+.dark-mode .card {
+    background-color: #23272b !important;
+    border-color: #2d3748 !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* Dark mode forms */
+.dark-mode .form-control,
+.dark-mode .form-select,
+.dark-mode .form-control:focus,
+.dark-mode .form-select:focus {
+    background-color: #181a2a !important;
+    border-color: #2d3748 !important;
+    color: #e2e8f0 !important;
+}
+
+.dark-mode .form-control:focus,
+.dark-mode .form-select:focus {
+    border-color: var(--input-focus) !important;
+    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25) !important;
+}
+
+/* Dark mode tables */
+.dark-mode .table {
+    background-color: #23272b !important;
+    color: #e2e8f0 !important;
+}
+
+.dark-mode .table th,
+.dark-mode .table td {
+    border-color: #2d3748 !important;
+}
+
+.dark-mode .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: rgba(45, 55, 72, 0.3) !important;
+}
+
+/* Dark mode buttons */
+.dark-mode .btn-outline-secondary {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.dark-mode .btn-outline-secondary:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Dark mode alerts */
+.dark-mode .alert-info {
+    background-color: rgba(66, 153, 225, 0.2) !important;
+    border-color: rgba(66, 153, 225, 0.3) !important;
+    color: var(--info-color) !important;
+}
+
+.dark-mode .alert-success {
+    background-color: rgba(72, 187, 120, 0.2) !important;
+    border-color: rgba(72, 187, 120, 0.3) !important;
+    color: var(--success-color) !important;
+}
+
+.dark-mode .alert-warning {
+    background-color: rgba(237, 137, 54, 0.2) !important;
+    border-color: rgba(237, 137, 54, 0.3) !important;
+    color: var(--warning-color) !important;
+}
+
+.dark-mode .alert-danger {
+    background-color: rgba(245, 101, 101, 0.2) !important;
+    border-color: rgba(245, 101, 101, 0.3) !important;
+    color: var(--danger-color) !important;
+}
+
+/* Dark mode list groups */
+.dark-mode .list-group-item {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.dark-mode .list-group-item:hover {
+    background-color: var(--bg-tertiary) !important;
+}
+
+/* Dark mode modals */
+.dark-mode .modal-content {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+.dark-mode .modal-header,
+.dark-mode .modal-footer {
+    border-color: var(--border-color) !important;
+}
+
+/* Dark mode tooltips */
+.dark-mode .tooltip-inner {
+    background-color: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Dark mode charts */
+.dark-mode .chart-container {
+    background-color: #23272b !important;
+}
+
+/* Footer styles are now handled in the footer.html template */
+
+/* Dark mode theme toggle button */
+.theme-toggle-btn {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+}
+
+.dark-mode .theme-toggle-btn {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Dark mode transitions */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Dark mode specific component overrides */
+.dark-mode .glass-navbar {
+    background: rgba(26, 31, 46, 0.85) !important;
+    border-color: rgba(99, 102, 241, 0.2) !important;
+}
+
+.dark-mode .summary-badge {
+    box-shadow: 0 2px 8px 0 var(--shadow-color);
+}
+
+.dark-mode .welcome-banner {
+    background: linear-gradient(90deg, #6366f1 0%, #4c51bf 100%) !important;
+}
+
+/* Dark mode responsive improvements */
+@media (max-width: 768px) {
+    .dark-mode .navbar .collapse {
+        background: rgba(26, 31, 46, 0.97) !important;
+    }
+}
+
+/* Statistics cards */
+.stat-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] .stat-card {
+    border-color: var(--border-color);
+    background-color: var(--bg-secondary);
+}
+
+/* Profile picture upload */
+.profile-pic-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-pic-upload {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #6366f1;
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.profile-pic-upload:hover {
+    background: #4f46e5;
+    transform: scale(1.1);
+}
+
+/* Settings toggles */
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+    margin-top: 0.25em;
+    vertical-align: top;
+    background-color: #6c757d;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28255, 255, 255, 0.25%29'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: left center;
+    border-radius: 2em;
+    transition: background-position 0.15s ease-in-out;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: #6366f1;
+    background-position: right center;
+}
+
+/* Enhanced Alert styling */
+.alert {
+    border-radius: 0.75rem;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.alert-info {
+    background-color: rgba(99, 102, 241, 0.1);
+    border-left: 4px solid #6366f1;
+    color: #6366f1;
+}
+
+.alert-success {
+    background-color: rgba(72, 187, 120, 0.1);
+    border-left: 4px solid #48bb78;
+    color: #38a169;
+}
+
+.alert-warning {
+    background-color: rgba(237, 137, 54, 0.1);
+    border-left: 4px solid #ed8936;
+    color: #dd6b20;
+}
+
+.alert-danger {
+    background-color: rgba(245, 101, 101, 0.1);
+    border-left: 4px solid #f56565;
+    color: #e53e3e;
+}
+
+/* Dark mode alerts */
+.dark-mode .alert-info {
+    background-color: rgba(99, 102, 241, 0.2);
+    border-left-color: #6366f1;
+    color: #a3bffa;
+}
+
+.dark-mode .alert-success {
+    background-color: rgba(72, 187, 120, 0.2);
+    border-left-color: #48bb78;
+    color: #9ae6b4;
+}
+
+.dark-mode .alert-warning {
+    background-color: rgba(237, 137, 54, 0.2);
+    border-left-color: #ed8936;
+    color: #fbd38d;
+}
+
+.dark-mode .alert-danger {
+    background-color: rgba(245, 101, 101, 0.2);
+    border-left-color: #f56565;
+    color: #fed7d7;
+}
+
+/* Alert close button */
+.alert .btn-close {
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.alert .btn-close:hover {
+    opacity: 1;
+}
+
+/* Button improvements */
+.btn-outline-primary:hover {
+    background-color: #6366f1;
+    border-color: #6366f1;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/* Enhanced Mobile Responsiveness */
+@media (max-width: 768px) {
+    /* General mobile improvements */
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Card improvements for mobile */
+    .card {
+        margin-bottom: 1rem;
+        border-radius: 0.75rem;
+    }
+    
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+    
+    /* Summary badges mobile optimization */
+    .summary-badge {
+        font-size: 0.9rem;
+        padding: 0.4em 0.8em;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+        width: auto;
+    }
+    
+    /* Form improvements for mobile */
+    .form-control, .form-select {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 0.75rem;
+    }
+    
+    /* Button improvements for mobile */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        min-height: 44px; /* Better touch target */
+    }
+    
+    .btn-sm {
+        min-height: 38px;
+    }
+    
+    /* Table improvements for mobile */
+    .table-responsive {
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+    
+    .table th, .table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Navigation improvements */
+    .navbar-brand {
+        font-size: 1.25rem !important;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        margin: 0.25rem 0;
+        border-radius: 0.5rem;
+    }
+    
+    /* Profile picture upload mobile */
+    .profile-pic-upload {
+        width: 30px;
+        height: 30px;
+    }
+    
+    /* Chart container mobile */
+    .chart-container {
+        height: 300px;
+        margin-bottom: 1rem;
+    }
+    
+    /* Dashboard cards mobile layout */
+    .dashboard-card {
+        margin-bottom: 1rem;
+    }
+    
+    /* Welcome banner mobile */
+    .welcome-banner {
+        padding: 1.5rem !important;
+        margin-bottom: 1rem;
+    }
+    
+    .welcome-banner h2 {
+        font-size: 1.5rem;
+    }
+    
+    .welcome-banner p {
+        font-size: 0.9rem;
+    }
+    
+    /* Modal improvements for mobile */
+    .modal-dialog {
+        margin: 1rem;
+    }
+    
+    .modal-content {
+        border-radius: 1rem;
+    }
+    
+    /* Footer mobile */
+    /* Footer styles are now handled in the footer.html template */
+}
+
+/* Extra small devices */
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .card {
+        margin-bottom: 0.75rem;
+    }
+    
+    .summary-badge {
+        font-size: 0.8rem;
+        padding: 0.3em 0.6em;
+        margin-bottom: 0.25rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem !important;
+    }
+    
+    .welcome-banner {
+        padding: 1rem !important;
+    }
+    
+    .welcome-banner h2 {
+        font-size: 1.25rem;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 768px) and (orientation: landscape) {
+    .navbar {
+        padding: 0.5rem 1rem;
+    }
+    
+    .welcome-banner {
+        padding: 1rem !important;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+}
+
+/* Form switch improvements */
+.form-switch .form-check-input {
+    width: 2.5em;
+    height: 1.25em;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+  box-shadow: 0 8px 32px 0 rgba(99,102,241,0.15);
+  margin-bottom: 2rem;
+  padding: 2.5rem 2rem;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+}
+.user-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  font-size: 2rem;
+  font-weight: 700;
+  background: #fff;
+  color: #6366f1;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dashboard-header h1 {
+  font-size: 2.2rem;
+  color: #fff;
+}
+.dashboard-header h1 span {
+  color: #ffe066;
+}
+.dashboard-header p {
+  color: #e0e7ff;
+  font-size: 1.1rem;
+}
+.dashboard-header .btn {
+  border-radius: 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.dashboard-header .btn:hover {
+  background: #6366f1;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+}
+/* Summary Cards */
+.summary-card {
+  border-radius: 1.25rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  background: #fff;
+}
+.summary-card:hover {
+  box-shadow: 0 8px 24px rgba(99,102,241,0.10);
+  transform: translateY(-2px) scale(1.02);
+}
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: #f3f4f6;
+}
+/* This Month Summary */
+.this-month-summary {
+  border-radius: 1.25rem;
+  background: linear-gradient(90deg, #f3f4f6 0%, #e0e7fa 100%);
+  margin-bottom: 1.5rem;
+}
+/* Insights Card */
+.insights-card {
+  border-radius: 1.25rem;
+  background: linear-gradient(90deg, #f0fdf4 0%, #e0f2fe 100%);
+}
+.insights-card blockquote {
+  border-left: 4px solid #6366f1;
+  margin-left: 0;
+  padding-left: 1rem;
+  font-style: italic;
+}
+/* Trends Widget */
+.trends-widget {
+  border-radius: 1.25rem;
+  background: linear-gradient(90deg, #f8fafc 0%, #e0e7fa 100%);
+  margin-bottom: 1.5rem;
+}
+/* Recent Activity */
+.recent-activity {
+  border-radius: 1.25rem;
+  background: #fff;
+}
+.recent-activity .list-group-item {
+  border: none;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 1.05rem;
+  padding: 0.85rem 1rem;
+}
+.recent-activity .list-group-item:last-child {
+  border-bottom: none;
+}
+/* Floating Quick Add Button */
+.btn.position-fixed.bottom-0.end-0 {
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+}
+/* Responsive Improvements */
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 1rem;
+    text-align: left;
+  }
+  .dashboard-header .btn {
+    margin-top: 1.5rem;
+    width: 100%;
+    justify-content: center;
+  }
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1.3rem;
+  }
+  .this-month-summary, .insights-card, .trends-widget, .recent-activity {
+    padding: 1.25rem 1rem;
+  }
+}
+
+/* Card hover effect for modern look */
+.card {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.card:hover {
+  box-shadow: 0 8px 32px 0 rgba(99,102,241,0.18);
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* Tighter vertical spacing for dashboard */
+.mb-4 { margin-bottom: 1.5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.gap-3 { gap: 1.25rem !important; }
+.gap-2 { gap: 0.75rem !important; }
+
+/* Responsive table wrapper */
+.table-responsive { margin-bottom: 1.5rem; }
+
+/* Subtle border/background for table header */
+.table thead th, .table thead td {
+  background: #f3f4f6;
+  border-bottom: 2px solid #e0e7fa;
+}
+
+/* Responsive chart container */
+.trends-widget .chart-container {
+  width: 100%;
+  height: 220px;
+  position: relative;
+}
+
+/* Welcome/empty state alert */
+.alert-info.text-center {
+  font-size: 1.1rem;
+  background: linear-gradient(90deg, #e0e7ff 0%, #f8fafc 100%);
+  border: 1px solid #c7d2fe;
+  color: #6366f1;
+}
+
+html, body {
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+/* Footer styles are now handled in the footer.html template */
+
+/* Footer styles are now handled in the footer.html template */
+/* Footer styles are now handled in the footer.html template */
+/* Footer responsive styles are now handled in the footer.html template */
+
+/* --- Enhanced Dark Mode Styles --- */
+body.dark-mode {
+  background: linear-gradient(135deg, #181a2a 0%, #23272b 100%) !important;
+}
+body.dark-mode .card {
+  background-color: #23272b !important;
+  color: #e2e8f0 !important;
+  border-color: #2d3748 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+body.dark-mode .table {
+  background-color: #23272b !important;
+  color: #e2e8f0 !important;
+}
+body.dark-mode .table th, body.dark-mode .table td {
+  border-color: #2d3748 !important;
+}
+body.dark-mode .chart-container,
+body.dark-mode canvas {
+  background-color: #23272b !important;
+}
+body.dark-mode .btn-primary, 
+body.dark-mode .btn-success, 
+body.dark-mode .btn-warning {
+  color: #fff;
+  border: none;
+}
+body.dark-mode .btn-secondary {
+  background: #2d3748;
+  color: #e2e8f0;
+  border: none;
+}
+body.dark-mode .form-control, 
+body.dark-mode .form-select {
+  background-color: #181a2a !important;
+  color: #e2e8f0 !important;
+  border-color: #2d3748 !important;
+}
+body.dark-mode .summary-badge {
+  background: #23272b !important;
+  color: #a3bffa !important;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.15);
+}
+/* Footer dark mode styles are now handled in the footer.html template */
+body.dark-mode .progress {
+  background-color: #181a2a;
+}
+body.dark-mode .progress-bar {
+  color: #fff;
+}
+body.dark-mode .alert-info, body.dark-mode .alert-success, body.dark-mode .alert-warning, body.dark-mode .alert-danger {
+  background-color: #23272b !important;
+  color: #a3bffa !important;
+  border-left-color: #6366f1 !important;
+}
+
+/* General chart container */
+.chart-container {
+  height: 170px;
+  min-height: 140px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+/* Pie chart specific */
+#pieChart.chart-canvas {
+  max-width: 220px;
+  max-height: 170px;
+}
+
+/* Bar/line chart specific */
+.chart-container canvas:not(#pieChart) {
+  max-width: 100%;
+  max-height: 150px;
+}
+
+/* --- Modern Dashboard Sidebar & Topbar --- */
+.dashboard-wrapper { min-height: 100vh; background: var(--dashboard-bg, #f8fafc); }
+.dashboard-sidebar {
+  width: 72px;
+  background: linear-gradient(135deg, #23272b 0%, #181a2a 100%);
+  min-height: 100vh;
+  box-shadow: 2px 0 16px 0 rgba(30,32,60,0.10);
+  z-index: 100;
+  transition: width 0.2s;
+}
+.dashboard-sidebar .sidebar-logo {
+  color: #6366f1;
+  font-size: 2.2rem;
+  text-decoration: none;
+}
+.dashboard-sidebar .nav-link {
+  color: #a0aec0;
+  font-size: 1.5rem;
+  padding: 0.75rem 0;
+  border-radius: 0.75rem;
+  transition: background 0.2s, color 0.2s;
+  text-align: center;
+}
+.dashboard-sidebar .nav-link.active, .dashboard-sidebar .nav-link:hover {
+  background: #6366f1;
+  color: #fff;
+}
+.dashboard-sidebar .nav-link.text-danger { color: #f87171; }
+.dashboard-sidebar .nav-link.text-danger:hover { background: #f87171; color: #fff; }
+.dashboard-sidebar.open { width: 180px; }
+@media (max-width: 991px) {
+  .dashboard-sidebar { position: fixed; left: -72px; top: 0; height: 100vh; transition: left 0.2s, width 0.2s; }
+  .dashboard-sidebar.open { left: 0; }
+}
+.dashboard-content { flex-grow: 1; min-width: 0; background: none; }
+.dashboard-topbar {
+  background: rgba(255,255,255,0.85);
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 12px 0 rgba(80, 80, 160, 0.08);
+  margin-bottom: 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+body.dark-mode .dashboard-topbar {
+  background: rgba(35,39,43,0.95);
+  color: #e2e8f0;
+}
+.dashboard-topbar .user-avatar {
+  width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem;
+}
+/* --- Modern Metric Cards --- */
+.metric-card {
+  background: rgba(255,255,255,0.85);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 24px 0 rgba(80, 80, 160, 0.10);
+  transition: box-shadow 0.2s, transform 0.2s;
+  text-align: center;
+}
+.metric-card:hover { box-shadow: 0 8px 32px 0 rgba(99,102,241,0.18); transform: translateY(-2px) scale(1.01); }
+.metric-icon { font-size: 2rem; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; }
+.metric-label { font-size: 1rem; color: #6b7280; }
+.metric-value { font-size: 2rem; font-weight: 700; color: #23272b; }
+.metric-currency { font-size: 1rem; color: #a0aec0; }
+body.dark-mode .metric-card {
+  background: rgba(35,39,43,0.95);
+  color: #e2e8f0;
+}
+body.dark-mode .metric-label { color: #a0aec0; }
+body.dark-mode .metric-value { color: #e2e8f0; }
+body.dark-mode .metric-currency { color: #6366f1; }
+/* --- Modern Chart Cards --- */
+.chart-card {
+  background: rgba(255,255,255,0.85);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 24px 0 rgba(80, 80, 160, 0.10);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+body.dark-mode .chart-card {
+  background: rgba(35,39,43,0.95);
+  color: #e2e8f0;
+}
+/* --- Recent Activity Card --- */
+.recent-activity-card {
+  background: rgba(255,255,255,0.85);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 24px 0 rgba(80, 80, 160, 0.10);
+}
+body.dark-mode .recent-activity-card {
+  background: rgba(35,39,43,0.95);
+  color: #e2e8f0;
+}
+/* --- Transitions for theme switching --- */
+body, .card, .dashboard-topbar, .dashboard-sidebar, .dashboard-content, .metric-card, .chart-card, .recent-activity-card {
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+/* Modern Biggest Single Expenses Table/Card */
+.modern-expenses-card {
+  background: rgba(255,255,255,0.92);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 24px 0 rgba(80, 80, 160, 0.10);
+  margin-bottom: 1.5rem;
+  max-height: 550px;
+  display: flex;
+  flex-direction: column;
+}
+.modern-expenses-card .table-responsive {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 450px;
+}
+.modern-expenses-table {
+  border-radius: 1rem;
+  overflow: hidden;
+  background: none;
+  margin-bottom: 0;
+  table-layout: fixed;
+  width: 100%;
+}
+.modern-expenses-table th, .modern-expenses-table td {
+  word-break: break-word;
+}
+.modern-expenses-table .badge {
+  max-width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.modern-expenses-table thead.table-light {
+  background: #f3f4f6;
+  color: #23272b;
+}
+body.dark-mode .modern-expenses-table thead.table-light {
+  background: #23272b;
+  color: #e2e8f0;
+}
+.modern-expenses-table td, .modern-expenses-table th {
+  vertical-align: middle;
+  border: none;
+  font-size: 0.97rem;
+  padding: 0.65rem 0.7rem;
+}
+.modern-expenses-table tbody tr {
+  transition: background 0.2s;
+}
+.modern-expenses-table tbody tr:hover {
+  background: #f3f4f6;
+}
+body.dark-mode .modern-expenses-table tbody tr:hover {
+  background: #23272b;
+}
+.modern-expenses-table .fw-semibold, .modern-expenses-table .fw-bold {
+  font-weight: 600 !important;
+}
+.modern-expenses-table .text-danger {
+  color: #ef4444 !important;
+}
+.modern-expenses-table .text-muted {
+  color: #6b7280 !important;
+}
+/* Custom scrollbar for table */
+.modern-expenses-card .table-responsive::-webkit-scrollbar {
+  width: 8px;
+}
+.modern-expenses-card .table-responsive::-webkit-scrollbar-thumb {
+  background: #c7d2fe;
+  border-radius: 4px;
+}
+body.dark-mode .modern-expenses-card .table-responsive::-webkit-scrollbar-thumb {
+  background: #444;
+} 

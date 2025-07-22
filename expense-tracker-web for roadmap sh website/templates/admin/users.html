@@ -1,0 +1,359 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 fw-bold text-primary mb-1">
+                <i class="bi bi-people me-2"></i>User Management
+            </h1>
+            <p class="text-muted mb-0">Manage system users and their data</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search users...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="sortBy">
+                        <option value="username">Sort by Username</option>
+                        <option value="joined">Sort by Joined Date</option>
+                        <option value="expenses">Sort by Expenses</option>
+                        <option value="activity">Sort by Last Activity</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" onclick="exportUsers()">
+                        <i class="bi bi-download me-2"></i>Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-table me-2"></i>Users ({{ users|length }})
+                </h5>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-danger" onclick="bulkDelete()">
+                        <i class="bi bi-trash me-1"></i>Bulk Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="usersTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>
+                                <input type="checkbox" class="form-check-input" id="selectAll">
+                            </th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Joined</th>
+                            <th>Expenses</th>
+                            <th>Budgets</th>
+                            <th>Total Spent</th>
+                            <th>Last Activity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr data-username="{{ user.username }}" data-status="active">
+                            <td>
+                                <input type="checkbox" class="form-check-input user-checkbox" value="{{ user._id }}">
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar me-3">
+                                        <i class="bi bi-person-circle"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">{{ user.username }}</h6>
+                                        <small class="text-muted">ID: {{ user._id }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-muted">{{ user.email }}</span>
+                            </td>
+                            <td>
+                                <span class="text-muted">
+                                    {{ user._id.generation_time.strftime('%Y-%m-%d') if user._id.generation_time else 'N/A' }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ user.expense_count }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">{{ user.budget_count }}</span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-danger">₹{{ "%.2f"|format(user.total_spent) }}</span>
+                            </td>
+                            <td>
+                                {% if user.last_activity %}
+                                <span class="text-muted">{{ user.last_activity.date }}</span>
+                                {% else %}
+                                <span class="text-muted">Never</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-success">Active</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('admin.user_detail', user_id=user._id) }}" 
+                                       class="btn btn-sm btn-outline-primary" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-warning" title="Edit User" onclick="editUser('{{ user._id }}')">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" title="Delete User" 
+                                            onclick="deleteUser('{{ user._id }}', '{{ user.username }}')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete user <strong id="deleteUserName"></strong>?</p>
+                <p class="text-danger">This action cannot be undone and will delete all user data including expenses, budgets, and settings.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 50%;
+    font-size: 1.5rem;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+    font-size: 0.875rem;
+}
+
+.btn-group .btn {
+    padding: 0.25rem 0.5rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5em 0.75em;
+}
+
+/* Dark mode support */
+body.dark-mode .card {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+body.dark-mode .card-header {
+    border-bottom-color: #4a5568;
+}
+
+body.dark-mode .table {
+    color: #e2e8f0;
+}
+
+body.dark-mode .table-light {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .avatar {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-content {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-header {
+    border-bottom-color: #4a5568;
+}
+
+body.dark-mode .modal-footer {
+    border-top-color: #4a5568;
+}
+</style>
+
+<script>
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#usersTable tbody tr');
+    
+    rows.forEach(row => {
+        const username = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+        
+        if (username.includes(searchTerm) || email.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+// Status filter
+document.getElementById('statusFilter').addEventListener('change', function() {
+    const status = this.value;
+    const rows = document.querySelectorAll('#usersTable tbody tr');
+    
+    rows.forEach(row => {
+        const userStatus = row.dataset.status;
+        if (!status || userStatus === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+// Sort functionality
+document.getElementById('sortBy').addEventListener('change', function() {
+    const sortBy = this.value;
+    const tbody = document.querySelector('#usersTable tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    rows.sort((a, b) => {
+        let aVal, bVal;
+        
+        switch(sortBy) {
+            case 'username':
+                aVal = a.querySelector('td:nth-child(2) h6').textContent;
+                bVal = b.querySelector('td:nth-child(2) h6').textContent;
+                break;
+            case 'joined':
+                aVal = new Date(a.querySelector('td:nth-child(4)').textContent);
+                bVal = new Date(b.querySelector('td:nth-child(4)').textContent);
+                break;
+            case 'expenses':
+                aVal = parseInt(a.querySelector('td:nth-child(5) .badge').textContent);
+                bVal = parseInt(b.querySelector('td:nth-child(5) .badge').textContent);
+                break;
+            case 'activity':
+                aVal = a.querySelector('td:nth-child(8)').textContent;
+                bVal = b.querySelector('td:nth-child(8)').textContent;
+                break;
+            default:
+                return 0;
+        }
+        
+        if (aVal < bVal) return -1;
+        if (aVal > bVal) return 1;
+        return 0;
+    });
+    
+    rows.forEach(row => tbody.appendChild(row));
+});
+
+// Select all functionality
+document.getElementById('selectAll').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.user-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+});
+
+// Delete user function
+function deleteUser(userId, username) {
+    document.getElementById('deleteUserName').textContent = username;
+    document.getElementById('deleteForm').action = `/admin/users/${userId}/delete`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+
+// Edit user function
+function editUser(userId) {
+    // Implement edit functionality
+    alert('Edit functionality will be implemented here');
+}
+
+// Bulk delete function
+function bulkDelete() {
+    const selectedUsers = document.querySelectorAll('.user-checkbox:checked');
+    if (selectedUsers.length === 0) {
+        alert('Please select users to delete');
+        return;
+    }
+    
+    if (confirm(`Are you sure you want to delete ${selectedUsers.length} users?`)) {
+        // Implement bulk delete functionality
+        alert('Bulk delete functionality will be implemented here');
+    }
+}
+
+// Export users function
+function exportUsers() {
+    // Implement export functionality
+    alert('Export functionality will be implemented here');
+}
+</script>
+{% endblock %} 

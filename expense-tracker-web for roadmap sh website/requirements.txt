@@ -1,0 +1,11 @@
+Flask
+Flask-PyMongo
+Flask-Login
+Flask-Bcrypt
+pandas
+reportlab
+requests
+python-dotenv
+pytesseract
+Pillow
+Flask-Mail 

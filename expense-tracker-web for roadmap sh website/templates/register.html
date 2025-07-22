@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Expense Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .register-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .register-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .register-header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 40px 30px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .register-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .register-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .register-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 10px 0 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .register-body {
+            padding: 40px 30px;
+        }
+        
+        .form-floating {
+            margin-bottom: 20px;
+        }
+        
+        .form-floating .form-control {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .form-floating .form-control:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+            background: white;
+        }
+        
+        .form-floating .form-control.is-invalid {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+        }
+        
+        .form-floating .form-control.is-valid {
+            border-color: #16a34a;
+            box-shadow: 0 0 0 0.2rem rgba(22, 163, 74, 0.25);
+        }
+        
+        .form-floating label {
+            padding: 16px 20px;
+            color: #6b7280;
+        }
+        
+        .btn-register {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-register:hover::before {
+            left: 100%;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-register:active {
+            transform: translateY(0);
+        }
+        
+        .register-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .register-footer a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .register-footer a:hover {
+            color: #4f46e5;
+        }
+        
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: #dc2626;
+            border-left: 4px solid #dc2626;
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #16a34a;
+            border-left: 4px solid #16a34a;
+        }
+        
+        .features-list {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-item {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+        
+        .feature-item i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .password-strength {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .password-strength.weak {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        
+        .password-strength.medium {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fed7aa;
+        }
+        
+        .password-strength.strong {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .password-requirements {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        .requirement.met {
+            color: #16a34a;
+        }
+        
+        .requirement i {
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 575.98px) {
+            .register-card {
+                margin: 5vw 0;
+                border-radius: 12px;
+                max-width: 98vw;
+                min-width: unset;
+            }
+            .register-header {
+                padding: 24px 10px 16px;
+            }
+            .register-header h1 {
+                font-size: 1.5rem;
+            }
+            .register-header p {
+                font-size: 1rem;
+            }
+            .register-body {
+                padding: 20px 10px;
+            }
+            .form-floating .form-control {
+                font-size: 15px;
+                padding: 12px 12px;
+            }
+            .btn-register {
+                font-size: 1rem;
+                padding: 12px 0;
+            }
+            .features-list {
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 18px;
+                padding: 10px 0 0 0;
+            }
+            .feature-item {
+                font-size: 0.95rem;
+            }
+            .register-footer {
+                margin-top: 18px;
+                padding-top: 10px;
+                font-size: 0.95rem;
+            }
+            .password-requirements {
+                padding: 10px;
+                font-size: 0.95rem;
+            }
+        }
+        
+        /* Loading animation */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+        
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Success animation */
+        .success-checkmark {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #16a34a;
+            color: white;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <h1><i class="bi bi-wallet2 me-2"></i>Join Expense Tracker</h1>
+                <p>Create your account and start tracking expenses today</p>
+                
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="bi bi-shield-check"></i>
+                        <div>Secure</div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="bi bi-graph-up"></i>
+                        <div>Analytics</div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="bi bi-cloud-check"></i>
+                        <div>Cloud Sync</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="register-body">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle me-2"></i>{{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <form method="POST" id="registerForm">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                        <label for="username">
+                            <i class="bi bi-person me-2"></i>Username
+                        </label>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                        <label for="email">
+                            <i class="bi bi-envelope me-2"></i>Email Address
+                        </label>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        <label for="password">
+                            <i class="bi bi-lock me-2"></i>Password
+                        </label>
+                    </div>
+                    
+                    <div class="password-strength" id="passwordStrength"></div>
+                    
+                    <div class="password-requirements">
+                        <h6 class="mb-3"><i class="bi bi-shield-lock me-2"></i>Password Requirements</h6>
+                        <div class="requirement" id="reqLength">
+                            <i class="bi bi-circle"></i>At least 8 characters
+                        </div>
+                        <div class="requirement" id="reqUppercase">
+                            <i class="bi bi-circle"></i>One uppercase letter
+                        </div>
+                        <div class="requirement" id="reqLowercase">
+                            <i class="bi bi-circle"></i>One lowercase letter
+                        </div>
+                        <div class="requirement" id="reqNumber">
+                            <i class="bi bi-circle"></i>One number
+                        </div>
+                        <div class="requirement" id="reqSpecial">
+                            <i class="bi bi-circle"></i>One special character
+                        </div>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password" placeholder="Confirm Password" required>
+                        <label for="confirmPassword">
+                            <i class="bi bi-lock-fill me-2"></i>Confirm Password
+                        </label>
+                    </div>
+                    
+                                            <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="{{ url_for('main.terms') }}" class="text-decoration-none" target="_blank">Terms of Service</a> and <a href="{{ url_for('main.privacy') }}" class="text-decoration-none" target="_blank">Privacy Policy</a>
+                            </label>
+                        </div>
+                    
+                    <button type="submit" class="btn btn-register" id="registerBtn">
+                        <i class="bi bi-person-plus me-2"></i>Create Account
+                    </button>
+                </form>
+                
+                <div class="register-footer">
+                    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Sign in here</a></p>
+                    <p class="text-muted small mt-2">
+                        <i class="bi bi-shield-lock me-1"></i>
+                        Your data is encrypted and secure
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+            
+            const strengthDiv = document.getElementById('passwordStrength');
+            const metCount = Object.values(requirements).filter(Boolean).length;
+            
+            // Update requirement indicators
+            document.getElementById('reqLength').className = `requirement ${requirements.length ? 'met' : ''}`;
+            document.getElementById('reqUppercase').className = `requirement ${requirements.uppercase ? 'met' : ''}`;
+            document.getElementById('reqLowercase').className = `requirement ${requirements.lowercase ? 'met' : ''}`;
+            document.getElementById('reqNumber').className = `requirement ${requirements.number ? 'met' : ''}`;
+            document.getElementById('reqSpecial').className = `requirement ${requirements.special ? 'met' : ''}`;
+            
+            // Update icons
+            document.querySelectorAll('.requirement.met i').forEach(icon => {
+                icon.className = 'bi bi-check-circle-fill';
+            });
+            
+            document.querySelectorAll('.requirement:not(.met) i').forEach(icon => {
+                icon.className = 'bi bi-circle';
+            });
+            
+            // Show strength indicator
+            if (password.length > 0) {
+                strengthDiv.style.display = 'block';
+                if (metCount <= 2) {
+                    strengthDiv.className = 'password-strength weak';
+                    strengthDiv.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Weak password';
+                } else if (metCount <= 4) {
+                    strengthDiv.className = 'password-strength medium';
+                    strengthDiv.innerHTML = '<i class="bi bi-exclamation-circle me-2"></i>Medium strength password';
+                } else {
+                    strengthDiv.className = 'password-strength strong';
+                    strengthDiv.innerHTML = '<i class="bi bi-check-circle me-2"></i>Strong password';
+                }
+            } else {
+                strengthDiv.style.display = 'none';
+            }
+            
+            return metCount === 5;
+        }
+        
+        // Password confirmation validation
+        function validatePasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const confirmField = document.getElementById('confirmPassword');
+            
+            if (confirmPassword.length > 0) {
+                if (password === confirmPassword) {
+                    confirmField.classList.remove('is-invalid');
+                    confirmField.classList.add('is-valid');
+                } else {
+                    confirmField.classList.remove('is-valid');
+                    confirmField.classList.add('is-invalid');
+                }
+            } else {
+                confirmField.classList.remove('is-valid', 'is-invalid');
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('password').addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+            validatePasswordMatch();
+        });
+        
+        document.getElementById('confirmPassword').addEventListener('input', validatePasswordMatch);
+        
+        // Form submission with validation
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const isStrongPassword = checkPasswordStrength(password);
+            
+            if (!isStrongPassword) {
+                e.preventDefault();
+                alert('Please ensure your password meets all requirements.');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match.');
+                return;
+            }
+            
+            const btn = document.getElementById('registerBtn');
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+        });
+        
+        // Auto-focus on username field
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('username').focus();
+        });
+        
+        // Smooth animations
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html> 
